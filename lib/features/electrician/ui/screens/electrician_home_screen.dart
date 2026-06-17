@@ -1,3 +1,5 @@
+import 'package:construc_assist/features/electrician/calculators/cable_section_screen.dart';
+import 'package:construc_assist/features/electrician/calculators/voltage_drop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:construc_assist/features/electrician/calculators/ohms_law_screen.dart';
 import 'package:construc_assist/features/electrician/calculators/power_calculator_screen.dart';
@@ -67,7 +69,7 @@ class ElectricianHomeScreen extends StatelessWidget {
                     'Sección de Cables', 
                     'Cálculo de calibre según consumo y distancia',
                     () {
-                      // Próximamente: Acá irá la navegación a Sección de Cables
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const CableSectionScreen()));
                     }
                   ),
                   // 4. Caída de Tensión
@@ -77,7 +79,7 @@ class ElectricianHomeScreen extends StatelessWidget {
                     'Caída de Tensión', 
                     'Verificación de pérdida de voltaje',
                     () {
-                      // Próximamente: Acá irá la navegación a Caída de Tensión
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const VoltageDropScreen()));
                     }
                   ),
                 ],
