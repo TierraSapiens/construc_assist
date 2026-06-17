@@ -19,7 +19,7 @@ class PowerMath {
     return sqrt(3) * voltaje * corriente * factorPotencia;
   }
 
-  // 3. Corriente a partir de Potencia (Soporta Mono y Tri)
+  // 3. Corriente a partir de Potencia
   static double calcularCorrienteDesdePotencia({
     required double potenciaWatts,
     required double voltaje,
@@ -29,11 +29,37 @@ class PowerMath {
     if (voltaje == 0 || factorPotencia == 0) return 0;
     
     if (isTrifasica) {
-      // I = P / (√3 * V * FP)
       return potenciaWatts / (sqrt(3) * voltaje * factorPotencia);
     } else {
-      // I = P / (V * FP)
       return potenciaWatts / (voltaje * factorPotencia);
     }
+  }
+
+  // --- NUEVAS FUNCIONES AVANZADAS ---
+
+  // Potencia Aparente (S) en VA
+  static double calcularPotenciaAparente(double potenciaActiva, double factorPotencia) {
+    if (factorPotencia <= 0) return 0;
+    return potenciaActiva / factorPotencia;
+  }
+
+  // Potencia Reactiva (Q) en VAr
+  static double calcularPotenciaReactiva(double potenciaActiva, double potenciaAparente) {
+    if (potenciaAparente < potenciaActiva) return 0;
+    return sqrt(pow(potenciaAparente, 2) - pow(potenciaActiva, 2));
+  }
+
+  // Consumo Mensual (kWh)
+  static double calcularConsumoKWh({
+    required double potenciaWatts, 
+    required double horasDiarias, 
+    double diasMensuales = 30,
+  }) {
+    return (potenciaWatts / 1000) * horasDiarias * diasMensuales;
+  }
+
+  // Costo Monetario Estimado
+  static double calcularCostoMensual(double consumoKWh, double precioPorKWh) {
+    return consumoKWh * precioPorKWh;
   }
 }

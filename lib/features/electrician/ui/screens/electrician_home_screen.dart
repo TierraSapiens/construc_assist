@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:construc_assist/features/electrician/calculators/ohms_law_screen.dart';
 import 'package:construc_assist/features/electrician/calculators/power_calculator_screen.dart';
 
 class ElectricianHomeScreen extends StatelessWidget {
@@ -33,23 +34,51 @@ class ElectricianHomeScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
+                  // 1. Potencia Eléctrica
                   _buildToolCard(
                     context, 
-                    '📏', 
-                    'Sección de Cables', 
-                    'Cálculo de calibre según consumo y distancia'
+                    '⚡', 
+                    'Potencia Eléctrica', 
+                    'Calculadora de Watts, Consumo y Costos',
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PowerCalculatorScreen()),
+                      );
+                    }
                   ),
-                  _buildToolCard(
-                    context, 
-                    '📉', 
-                    'Caída de Tensión', 
-                    'Verificación de pérdida de voltaje'
-                  ),
+                  // 2. Ley de Ohm
                   _buildToolCard(
                     context, 
                     '📐', 
                     'Ley de Ohm', 
-                    'Calculadora rápida de V, I, R o W'
+                    'Calculadora rápida de V, I, R o W',
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const OhmsLawScreen()),
+                      );
+                    }
+                  ),
+                  // 3. Sección de Cables
+                  _buildToolCard(
+                    context, 
+                    '📏', 
+                    'Sección de Cables', 
+                    'Cálculo de calibre según consumo y distancia',
+                    () {
+                      // Próximamente: Acá irá la navegación a Sección de Cables
+                    }
+                  ),
+                  // 4. Caída de Tensión
+                  _buildToolCard(
+                    context, 
+                    '📉', 
+                    'Caída de Tensión', 
+                    'Verificación de pérdida de voltaje',
+                    () {
+                      // Próximamente: Acá irá la navegación a Caída de Tensión
+                    }
                   ),
                 ],
               ),
@@ -60,8 +89,8 @@ class ElectricianHomeScreen extends StatelessWidget {
     );
   }
 
-  // Molde para las tarjetas de herramientas
-  Widget _buildToolCard(BuildContext context, String emoji, String title, String subtitle) {
+  // Molde MODIFICADO: Ahora recibe la acción "onTap" como un parámetro extra (VoidCallback)
+  Widget _buildToolCard(BuildContext context, String emoji, String title, String subtitle, VoidCallback onTapAction) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
@@ -81,13 +110,8 @@ class ElectricianHomeScreen extends StatelessWidget {
           Icons.arrow_forward_ios, 
           color: Theme.of(context).colorScheme.primary
         ),
-        onTap: () {
-          // Ahora sí usamos el import navegando a la calculadora
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PowerCalculatorScreen()),
-          );
-        },
+        // Aquí se ejecuta la acción específica que le pasamos a cada tarjeta
+        onTap: onTapAction,
       ),
     );
   }
