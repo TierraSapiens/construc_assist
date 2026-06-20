@@ -1,5 +1,4 @@
 enum MessageRole { user, ai }
-
 class ChatMessage {
   final String text;
   final MessageRole role;

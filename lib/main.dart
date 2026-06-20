@@ -14,7 +14,6 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        // Le inyectamos la memoria a Riverpod
         sharedPrefsProvider.overrideWithValue(prefs),
       ],
       child: const ConstrucAssistApp(),
@@ -29,14 +28,12 @@ class ConstrucAssistApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeProvider);
  // final prefs = ref.watch(sharedPrefsProvider);
-    
  // final hasSelectedMode = prefs.containsKey('isObraMode');
 
     return MaterialApp(
       title: 'Construc Assist',
       debugShowCheckedModeBanner: false,
       theme: currentTheme,
-      // Si ya eligió modo va al Menú, si no, a Bienvenida
   // home: hasSelectedMode ? const MainMenuScreen() : const WelcomeScreen(),
       home: const ChatScreen(),
     );
@@ -63,7 +60,7 @@ class WelcomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 50),
               
-              // Botón MODO OBRA
+              // Boton MODO OBRA
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
@@ -79,7 +76,7 @@ class WelcomeScreen extends ConsumerWidget {
               
               const SizedBox(height: 20),
               
-              // Botón MODO OFICINA
+              // Boton MODO OFICINA
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
