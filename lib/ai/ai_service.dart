@@ -1,9 +1,10 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'ai_config.dart'; // Importamos tu archivo de configuración
+import 'ai_constants.dart'; // Importamos tu archivo de configuración
 
 class AiService {
-  // Acá va tu clave de API (idealmente sacada de variables de entorno, no hardcodeada)
-  final String _apiKey = 'TU_API_KEY_AQUI'; 
+  final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
   late final GenerativeModel _model;
   late final ChatSession _chatSession;
 
@@ -26,7 +27,7 @@ class AiService {
       final response = await _chatSession.sendMessage(Content.text(userText));
       return response.text;
     } catch (e) {
-      print('Error al comunicarse con la IA: $e');
+      debugPrint('Error al comunicarse con la IA: $e');
       return 'Hubo un error al procesar tu solicitud. Por favor, intentá de nuevo.';
     }
   }

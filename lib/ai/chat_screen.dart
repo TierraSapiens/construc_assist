@@ -3,11 +3,13 @@ import '../ai/ai_service.dart'; // Ajustá la ruta si es necesario
 import '../ai/message_model.dart'; // Ajustá la ruta si es necesario
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> {
   final AiService _aiService = AiService();
   final TextEditingController _textController = TextEditingController();
   
@@ -75,7 +77,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     child: Text(
                       message.text,
-                      style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87, // ¡Ahora está adentro de los paréntesis de TextStyle!
+                      ),
                     ),
                   ),
                 );
@@ -99,6 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _textController,
+                    style: const TextStyle(color: Colors.black87),
                     decoration: InputDecoration(
                       hintText: 'Describí tu problema de plomería...',
                       border: OutlineInputBorder(

@@ -1,14 +1,14 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';
 import 'package:construc_assist/features/home/ui/screens/main_menu_screen.dart';
+import 'package:construc_assist/ai/chat_screen.dart';
 
 void main() async {
-  // Aseguramos que Flutter esté listo antes de leer la memoria
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Cargamos la memoria del teléfono ANTES de arrancar la app
+  await dotenv.load(fileName: ".env");
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
@@ -28,17 +28,17 @@ class ConstrucAssistApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeProvider);
-    final prefs = ref.watch(sharedPrefsProvider);
+ // final prefs = ref.watch(sharedPrefsProvider);
     
-    // Verificamos si la memoria ya tiene guardado el modo
-    final hasSelectedMode = prefs.containsKey('isObraMode');
+ // final hasSelectedMode = prefs.containsKey('isObraMode');
 
     return MaterialApp(
       title: 'Construc Assist',
       debugShowCheckedModeBanner: false,
       theme: currentTheme,
       // Si ya eligió modo va al Menú, si no, a Bienvenida
-      home: hasSelectedMode ? const MainMenuScreen() : const WelcomeScreen(),
+  // home: hasSelectedMode ? const MainMenuScreen() : const WelcomeScreen(),
+      home: const ChatScreen(),
     );
   }
 }
