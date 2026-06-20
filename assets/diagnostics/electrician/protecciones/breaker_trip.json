@@ -1,0 +1,223 @@
+{
+  "schema_version": "1.1.0",
+  "diagnostic_id": "ELE-BREAKER-TRIP-001",
+  "status": "active",
+  "gremio": {
+    "id": "electricidad",
+    "nombre": { "es": "Electricidad", "en": "Electrical" }
+  },
+  "categoria": {
+    "id": "protecciones",
+    "nombre": { "es": "Protecciones eléctricas", "en": "Electrical protection" }
+  },
+  "averia": {
+    "codigo": "breaker_trip",
+    "nombre": { "es": "Falla en protecciones (Salto de Térmica/Disyuntor)", "en": "Breaker or RCD tripping" },
+    "descripcion": { "es": "La protección del tablero eléctrico se dispara impidiendo el rearmado estable.", "en": "The electrical panel protection trips, preventing a stable reset." },
+    "sintomas": [
+      { "id": "sym_001", "texto": { "es": "El disyuntor o térmica salta instantáneamente.", "en": "The RCD or breaker trips instantly." } },
+      { "id": "sym_002", "texto": { "es": "La protección salta luego de unos minutos de uso.", "en": "The protection trips after a few minutes of use." } }
+    ]
+  },
+  "contexto": {
+    "niveles_usuario": ["domestico", "tecnico", "profesional"],
+    "paises_soportados": ["AR", "UY", "CL", "MX", "ES"]
+  },
+  "flujo_diagnostico": {
+    "inicio": "sec_001",
+    "nodos": [
+      {
+        "id": "sec_001",
+        "tipo": "seguridad",
+        "tipo_interaccion": "si_no",
+        "texto": { 
+          "es": "Fase 0: Inspección de Peligro Crítico. ¿Detecta olor a quemado, humo, ruidos de chispas o presencia de agua en el tablero?", 
+          "en": "Phase 0: Critical Hazard Inspection. Do you detect a burning smell, smoke, arcing sounds, or water in the panel?" 
+        },
+        "respuestas": [
+          { "valor": "si", "texto": "SÍ, hay peligro evidente", "siguiente": "cause_evacuate" },
+          { "valor": "no", "texto": "NO, se ve seguro visualmente", "siguiente": "q_001" }
+        ]
+      },
+      {
+        "id": "q_001",
+        "tipo": "pregunta",
+        "tipo_interaccion": "opcion_multiple",
+        "texto": { 
+          "es": "Fase 1: Comportamiento. Intente rearmar la protección (subir la palanca). ¿Cómo reacciona?", 
+          "en": "Phase 1: Behavior. Try to reset the protection. How does it react?" 
+        },
+        "respuestas": [
+          { "valor": "inmediato", "texto": "Dispara INSTANTÁNEAMENTE", "siguiente": "test_001" },
+          { "valor": "retardado", "texto": "Tarda unos MINUTOS en saltar", "siguiente": "q_002" }
+        ]
+      },
+      {
+        "id": "q_002",
+        "tipo": "pregunta",
+        "tipo_interaccion": "si_no",
+        "texto": { 
+          "es": "¿El salto coincide con el encendido de un artefacto de alto consumo (Termotanque, Anafe, Aire Acondicionado, Pava)?", 
+          "en": "Does the trip coincide with turning on a high-consumption appliance?" 
+        },
+        "respuestas": [
+          { "valor": "si", "texto": "Sí, al prender un equipo específico", "siguiente": "cause_overload_appliance" },
+          { "valor": "no", "texto": "No, salta de la nada al rato", "siguiente": "cause_overload_general" }
+        ]
+      },
+      {
+        "id": "test_001",
+        "tipo": "prueba",
+        "tipo_interaccion": "si_no",
+        "texto": { 
+          "es": "Fase 2: Aislamiento manual. Baje TODAS las térmicas secundarias. Rearme la protección general (Disyuntor/Térmica Principal). ¿Se mantiene arriba?", 
+          "en": "Phase 2: Manual Isolation. Turn OFF all secondary breakers. Reset the main protection. Does it stay up?" 
+        },
+        "respuestas": [
+          { "valor": "si", "texto": "SÍ, ahora se mantiene estable", "siguiente": "test_002" },
+          { "valor": "no", "texto": "NO, sigue saltando igual", "siguiente": "test_003" }
+        ]
+      },
+      {
+        "id": "test_002",
+        "tipo": "prueba",
+        "tipo_interaccion": "si_no",
+        "texto": { 
+          "es": "Vaya subiendo las térmicas secundarias UNA por UNA. ¿Identificó cuál de ellas hace saltar la protección general?", 
+          "en": "Turn ON the secondary breakers ONE by ONE. Did you identify which one trips the main protection?" 
+        },
+        "respuestas": [
+          { "valor": "si", "texto": "SÍ, saltó con una térmica específica", "siguiente": "cause_isolated_circuit" },
+          { "valor": "no", "texto": "NO, subí todas y no saltó más", "siguiente": "cause_intermittent" }
+        ]
+      },
+      {
+        "id": "test_003",
+        "tipo": "prueba",
+        "tipo_interaccion": "confirmar",
+        "texto": { 
+          "es": "Fase 3: Medición Profesional. Con el tablero completamente desenergizado aguas arriba, mida continuidad entre Fase/Neutro y Tierra en las barras principales.", 
+          "en": "Phase 3: Professional Measurement. With the panel completely de-energized upstream, check continuity between Phase/Neutral and Ground on the main bars." 
+        },
+        "herramientas_requeridas": ["multimetro", "destornillador_aislado"],
+        "nivel_minimo": "profesional",
+        "respuestas": [
+          { "valor": "confirmar", "texto": "Medición realizada", "siguiente": "cause_main_short" }
+        ]
+      },
+      {
+        "id": "cause_evacuate",
+        "tipo": "causa",
+        "probabilidad": 1.0,
+        "texto": { "es": "Peligro inminente de incendio o electrocución.", "en": "Imminent risk of fire or electrocution." },
+        "soluciones": ["sol_emergency"]
+      },
+      {
+        "id": "cause_overload_appliance",
+        "tipo": "causa",
+        "probabilidad": 0.90,
+        "texto": { "es": "Falla de aislación o cortocircuito interno en un electrodoméstico específico.", "en": "Insulation failure or internal short circuit in a specific appliance." },
+        "soluciones": ["sol_unplug_appliance"]
+      },
+      {
+        "id": "cause_overload_general",
+        "tipo": "causa",
+        "probabilidad": 0.80,
+        "texto": { "es": "Sobrecarga por exceso de consumo simultáneo en la instalación.", "en": "Overload due to excessive simultaneous consumption in the installation." },
+        "soluciones": ["sol_redistribute"]
+      },
+      {
+        "id": "cause_isolated_circuit",
+        "tipo": "causa",
+        "probabilidad": 0.85,
+        "texto": { "es": "Cortocircuito o fuga a tierra localizada en el circuito derivado identificado.", "en": "Short circuit or ground fault located in the identified branch circuit." },
+        "soluciones": ["sol_check_branch"]
+      },
+      {
+        "id": "cause_main_short",
+        "tipo": "causa",
+        "probabilidad": 0.70,
+        "texto": { "es": "Cortocircuito franco en la línea principal o falla estructural de la propia protección.", "en": "Dead short in the main line or structural failure of the protective device itself." },
+        "soluciones": ["sol_replace_breaker", "sol_call_professional"]
+      },
+      {
+        "id": "cause_intermittent",
+        "tipo": "causa",
+        "probabilidad": 0.30,
+        "texto": { "es": "Falla intermitente por humedad temporaria o falso contacto térmico.", "en": "Intermittent fault due to temporary humidity or loose thermal connection." },
+        "soluciones": ["sol_call_professional"]
+      }
+    ]
+  },
+  "soluciones": [
+    {
+      "id": "sol_emergency",
+      "texto": { "es": "CORTE el suministro general externo inmediatamente si es seguro, EVACUE la zona y llame a los bomberos o al servicio de emergencias de la distribuidora.", "en": "CUT the main external power supply immediately if safe, EVACUATE and call emergency services." },
+      "materiales_sugeridos": [],
+      "requiere_profesional": true,
+      "es_accion_externa": true
+    },
+    {
+      "id": "sol_unplug_appliance",
+      "texto": { "es": "Desconecte el artefacto defectuoso por completo y envíelo a reparación técnica. No lo vuelva a enchufar.", "en": "Completely unplug the defective appliance and send it for technical repair." },
+      "materiales_sugeridos": [],
+      "requiere_profesional": false,
+      "tiempo_estimado_min": 5
+    },
+    {
+      "id": "sol_redistribute",
+      "texto": { "es": "Apague equipos que no sean esenciales. Solicite un aumento de potencia contratada o planifique una readecuación de circuitos si el consumo es estructural.", "en": "Turn off non-essential equipment. Request a load upgrade or plan a circuit redesign." },
+      "materiales_sugeridos": [],
+      "requiere_profesional": false,
+      "tiempo_estimado_min": 10
+    },
+    {
+      "id": "sol_check_branch",
+      "texto": { "es": "Deje esa térmica secundaria baja y restablezca el resto de la casa. Proceda a revisar cajas de paso, tomacorrientes y luminarias vinculadas a ese circuito cortado.", "en": "Leave that specific breaker off and reset the rest. Check junction boxes, outlets, and lights tied to that circuit." },
+      "materiales_sugeridos": ["MAT-ELE-CINTA-AISL"],
+      "requiere_profesional": true,
+      "tiempo_estimado_min": 60
+    },
+    {
+      "id": "sol_replace_breaker",
+      "texto": { "es": "Reemplace la llave termo-magnética o disyuntor dañado, verificando previamente el calibre correcto según la sección del cable.", "en": "Replace the damaged breaker or RCD, verifying the correct rating based on cable gauge." },
+      "materiales_sugeridos": ["MAT-ELE-TERM-20A", "MAT-ELE-DISY-25A"],
+      "requiere_profesional": true,
+      "tiempo_estimado_min": 30
+    },
+    {
+      "id": "sol_call_professional",
+      "texto": { "es": "Se requiere intervención avanzada para el rastreo de fugas con megóhmetro o reemplazo de componentes de tablero principal.", "en": "Advanced intervention required for tracking leaks with an insulation tester or replacing main panel components." },
+      "materiales_sugeridos": [],
+      "requiere_profesional": true,
+      "es_accion_externa": true
+    }
+  ],
+  "normativas": [
+    { "pais": "AR", "codigo": "AEA", "referencia": "AEA 90364 - Reglas de Ejecución" },
+    { "pais": "CL", "codigo": "SEC", "referencia": "RIC N° 10 - Sistemas de Protección" },
+    { "pais": "ES", "codigo": "REBT", "referencia": "ITC-BT-22 - Protecciones" }
+  ],
+  "seguridad": {
+    "nivel_riesgo": "alto",
+    "requiere_desenergizar": true,
+    "equipos_proteccion": ["guantes_dielectricos", "calzado_aislante", "gafas_de_seguridad"],
+    "advertencias": {
+      "es": [
+        "Riesgo de arco eléctrico. No manipule el interior del tablero si hay humedad extrema.",
+        "Asegure la ausencia de tensión aguas abajo antes de tocar barras de distribución."
+      ],
+      "en": [
+        "Arc flash hazard. Do not handle panel internals in high humidity conditions.",
+        "Ensure absence of voltage downstream before touching busbars."
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.1.0",
+    "fecha_creacion": "2026-06-19T15:00:00Z",
+    "ultima_actualizacion": "2026-06-19T15:00:00Z",
+    "fuente": "biblioteca_tecnica_construc_assist",
+    "tags": ["tablero", "termica", "disyuntor", "salto", "cortocircuito", "sobrecarga"]
+  }
+}

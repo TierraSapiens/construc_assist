@@ -13,6 +13,8 @@
 migrate_working_dir/
 .env
 .packages
+prueba_electrostock.py
+captura_categoria.png
 
 # IntelliJ related
 *.iml
