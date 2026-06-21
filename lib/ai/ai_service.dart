@@ -1,5 +1,4 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'ai_constants.dart';
 
@@ -9,10 +8,11 @@ class AiService {
   late final ChatSession _chatSession;
 
   AiService() {
+    // 2. Usamos el modelo moderno compatible con tu versión 0.4.3
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3.5-flash',
       apiKey: _apiKey,
-      systemInstruction: Content.system(AiConfig.plumbingAiSystemPrompt), 
+      systemInstruction: Content.system(AiConfig.plumbingAiSystemPrompt),
     );
 
     _chatSession = _model.startChat();
@@ -23,8 +23,7 @@ class AiService {
       final response = await _chatSession.sendMessage(Content.text(userText));
       return response.text;
     } catch (e) {
-      debugPrint('Error al comunicarse con la IA: $e');
-      return 'Hubo un error al procesar tu solicitud. Por favor, intentá de nuevo.';
+      return 'ERROR TÉCNICO: $e';
     }
   }
 }
