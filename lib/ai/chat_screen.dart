@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'chat_provider.dart';
-import 'message_model.dart'; // ¡Agregamos esto para que reconozca MessageRole!
+import 'message_model.dart';
 
 class ChatScreen extends ConsumerWidget {
   ChatScreen({super.key});
