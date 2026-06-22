@@ -10,9 +10,7 @@ class ChatScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos la lista de mensajes (se actualiza sola cuando cambia el estado)
     final messages = ref.watch(chatProvider);
-    // Referencia al notifier para ejecutar acciones
     final chatNotifier = ref.read(chatProvider.notifier);
 
     return Scaffold(
@@ -25,11 +23,9 @@ class ChatScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final msg = messages[index];
 
-                // Creamos una variable rápida para saber si es el usuario
                 final bool isUserMessage = msg.role == MessageRole.user;
 
                 return Align(
-                  // Usamos la nueva variable acá
                   alignment: isUserMessage
                       ? Alignment.centerRight
                       : Alignment.centerLeft,
@@ -40,7 +36,6 @@ class ChatScreen extends ConsumerWidget {
                       horizontal: 8,
                     ),
                     decoration: BoxDecoration(
-                      // Y también usamos la nueva variable acá para el color
                       color: isUserMessage
                           ? Colors.green[100]
                           : Colors.grey[200],
@@ -59,14 +54,11 @@ class ChatScreen extends ConsumerWidget {
             ),
           ),
 
-          // Indicador de "Escribiendo..."
           if (chatNotifier.isLoading)
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: CircularProgressIndicator(),
             ),
-
-          // Caja de texto
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(

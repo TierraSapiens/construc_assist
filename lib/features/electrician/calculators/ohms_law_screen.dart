@@ -32,7 +32,6 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
         _errorMsg = result['error'];
       } else {
         _errorMsg = null;
-        // Rellenamos los campos vacíos con el resultado exacto
         _vController.text = result['v'].toStringAsFixed(2);
         _iController.text = result['i'].toStringAsFixed(2);
         _rController.text = result['r'].toStringAsFixed(2);
@@ -54,9 +53,7 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ley de Ohm y Watt'),
-      ),
+      appBar: AppBar(title: const Text('Ley de Ohm y Watt')),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -64,13 +61,18 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Cuadro de instrucciones
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: const Row(
                   children: [
@@ -95,12 +97,15 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
               _buildTextField(_rController, 'Resistencia (Ω)'),
               const SizedBox(height: 16),
               _buildTextField(_pController, 'Potencia (W)'),
-              
+
               if (_errorMsg != null) ...[
                 const SizedBox(height: 16),
                 Text(
                   _errorMsg!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -115,9 +120,14 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
                       onPressed: _limpiar,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Limpiar', style: TextStyle(fontSize: 16)),
+                      child: const Text(
+                        'Limpiar',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -128,10 +138,20 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Calcular Faltantes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Calcular Faltantes',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -149,7 +169,9 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
         filled: true,
       ),
     );

@@ -8,7 +8,6 @@ class AiService {
   late final ChatSession _chatSession;
 
   AiService() {
-    // 2. Usamos el modelo moderno compatible con tu versión 0.4.3
     _model = GenerativeModel(
       model: 'gemini-3.5-flash',
       apiKey: _apiKey,

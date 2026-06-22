@@ -9,15 +9,12 @@ import 'package:construc_assist/ai/chat_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Cargar el .env antes de arrancar
   await dotenv.load(fileName: ".env");
 
-  // 2. Cargamos la memoria del teléfono ANTES de mostrar la app
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
     ProviderScope(
-      // 3. Acá es donde "matamos" el UnimplementedError inyectando la memoria real
       overrides: [sharedPrefsProvider.overrideWithValue(prefs)],
       child: const ConstrucAssistApp(),
     ),

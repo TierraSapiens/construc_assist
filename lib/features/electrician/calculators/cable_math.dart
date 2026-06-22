@@ -4,12 +4,21 @@ class CableMath {
   // Constantes de resistividad (Ohm * mm² / m) a 20°C aprox.
   static const double rhoCobre = 0.0172;
   static const double rhoAluminio = 0.0282;
-
   // Secciones comerciales estándar en mm²
   static const List<double> seccionesComerciales = [
-    1.5, 2.5, 4.0, 6.0, 10.0, 16.0, 25.0, 35.0, 50.0, 70.0, 95.0, 120.0
+    1.5,
+    2.5,
+    4.0,
+    6.0,
+    10.0,
+    16.0,
+    25.0,
+    35.0,
+    50.0,
+    70.0,
+    95.0,
+    120.0,
   ];
-
   // 1. Calcular Sección Requerida (mm²)
   static double calcularSeccion({
     required double corriente,
@@ -37,7 +46,7 @@ class CableMath {
     for (double s in seccionesComerciales) {
       if (s >= seccionCalculada) return s;
     }
-    return seccionCalculada; // Si es gigantesca, devuelve el cálculo crudo
+    return seccionCalculada;
   }
 
   // 2. Calcular Caída de Tensión (Volts y Porcentaje)
@@ -60,9 +69,6 @@ class CableMath {
       caidaVolts = (2 * rho * longitud * corriente) / seccion;
     }
 
-    return {
-      'volts': caidaVolts,
-      'porcentaje': (caidaVolts / voltaje) * 100,
-    };
+    return {'volts': caidaVolts, 'porcentaje': (caidaVolts / voltaje) * 100};
   }
 }
