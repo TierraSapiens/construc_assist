@@ -1,0 +1,17 @@
+[
+  {
+    "oferta_id": "OFER-000001",
+    "material_id": "MAT-ELE-CAB-UNI-2P5",
+    "proveedor_id": "PROV-ELECTROSTOCK",
+    "pais": "AR",
+    "region": "CABA",
+    "moneda": "ARS",
+    "precio": 1758.16,
+    "impuestos": {
+      "iva": 21
+    },
+    "unidad_venta": "m",
+    "fecha_actualizacion": "2026-06-19T10:00:00Z",
+    "estado": "vigente"
+  }
+]

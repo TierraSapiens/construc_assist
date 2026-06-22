@@ -1,0 +1,15 @@
+[
+  {
+    "categoria_id": "CAT-ELE-CAB-UNI",
+    "nombre": {
+      "es": "Cables unipolares",
+      "en": "Single-core wires"
+    },
+    "categoria_padre_id": "CAT-ELE-CAB",
+    "ruta": [
+      "electricity",
+      "cables",
+      "unipolares"
+    ]
+  }
+]

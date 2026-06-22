@@ -1,0 +1,12 @@
+[
+  {
+    "proveedor_id": "PROV-ELECTROSTOCK",
+    "nombre": "Electrostock",
+    "tipo": "distribuidor",
+    "pais": "AR",
+    "region": "CABA",
+    "moneda_preferida": "ARS",
+    "sitio_web": "https://electrostock.com.ar",
+    "activo": true
+  }
+]

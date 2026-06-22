@@ -1,0 +1,53 @@
+{
+  "reparacion_id": "REP-ELE-CAMBIO-TERM",
+  "titulo": {
+    "es": "Reemplazo de Llave Térmica",
+    "en": "Circuit Breaker Replacement"
+  },
+  "dificultad": "intermedia",
+  "tiempo_estimado_minutos": 30,
+  "advertencias_seguridad": [
+    "¡CORTAR LA ENERGÍA DEL TABLERO GENERAL ANTES DE EMPEZAR!",
+    "Verificar ausencia de tensión con el buscapolos."
+  ],
+  "materiales_requeridos": [
+    {
+      "material_id": "MAT-ELE-TERM-20A",
+      "cantidad": 1
+    }
+  ],
+  "herramientas_requeridas": [
+    "HER-ELE-DEST-PHILLIPS",
+    "HER-ELE-BUSCAPOLOS"
+  ],
+  "pasos": [
+    {
+      "orden": 1,
+      "descripcion": {
+         "es": "Retirar los tornillos y la tapa frontal del tablero eléctrico.",
+         "en": "Remove the screws and the front cover of the electrical panel."
+      }
+    },
+    {
+      "orden": 2,
+      "descripcion": {
+         "es": "Aflojar los bornes y desconectar los cables de la térmica defectuosa.",
+         "en": "Loosen the terminals and disconnect the wires from the faulty breaker."
+      }
+    },
+    {
+      "orden": 3,
+      "descripcion": {
+         "es": "Desenganchar la térmica del riel DIN tirando de la pestaña inferior.",
+         "en": "Unhook the breaker from the DIN rail by pulling the bottom tab."
+      }
+    },
+    {
+      "orden": 4,
+      "descripcion": {
+         "es": "Colocar la nueva térmica, conectar los cables asegurando un apriete firme y rearmar el tablero.",
+         "en": "Install the new breaker, connect the wires ensuring a tight fit, and reassemble the panel."
+      }
+    }
+  ]
+}

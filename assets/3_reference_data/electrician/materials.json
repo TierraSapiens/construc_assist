@@ -1,0 +1,42 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "material_id": "MAT-ELE-CAB-UNI-2P5",
+    "nombre": {
+      "es": "Cable unipolar 2,5 mm²",
+      "en": "Single-core wire 2.5 mm²"
+    },
+    "descripcion": {
+      "es": "Cable conductor de cobre para instalaciones eléctricas.",
+      "en": "Copper conductor cable for electrical installations."
+    },
+    "categoria_id": "CAT-ELE-CAB-UNI",
+    "unidad_base": "m",
+    "atributos": {
+      "seccion_nominal": {
+        "valor": 2.5,
+        "unidad": "mm2"
+      },
+      "material_conductor": "cobre",
+      "aislamiento": "PVC",
+      "tension_nominal": {
+        "valor": 500,
+        "unidad": "V"
+      }
+    },
+    "normativas": [
+      {
+        "pais": "AR",
+        "norma": "IRAM 2183"
+      },
+      {
+        "pais": "CO",
+        "norma": "RETIE"
+      }
+    ],
+    "imagenes": [
+      "https://cdn.ejemplo.com/materiales/cable-2p5.jpg"
+    ],
+    "activo": true
+  }
+]
