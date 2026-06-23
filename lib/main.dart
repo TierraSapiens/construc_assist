@@ -1,10 +1,11 @@
+import 'screens/pantalla_prueba.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // <-- 1. Agregamos esto
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';
 import 'package:construc_assist/features/home/ui/screens/main_menu_screen.dart';
-import 'package:construc_assist/ai/chat_screen.dart';
+// import 'package:construc_assist/ai/chat_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,8 @@ class ConstrucAssistApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: currentTheme,
       // home: hasSelectedMode ? const MainMenuScreen() : const WelcomeScreen(),
-      home: ChatScreen(),
+      // home: ChatScreen(),
+      home: PantallaPruebaMateriales(),
     );
   }
 }

@@ -67,6 +67,9 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - .env
+    - assets/diagnostics/electrician/protecciones/
+    - assets/2_repairs/electrician/
+    - assets/3_reference_data/electrician/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
