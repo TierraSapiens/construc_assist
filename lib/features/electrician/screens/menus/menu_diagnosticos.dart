@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- IMPORTANTE: Agregamos Riverpod
 import 'package:construc_assist/core/settings/theme_provider.dart'; // <-- Importamos tu interruptor maestro
-import 'package:construc_assist/screens/pantalla_diagnostico.dart';
+import 'package:construc_assist/features/electrician/screens/menus/diagnostics/pantalla_diagnostico.dart';
 
 // Cambiamos StatelessWidget por ConsumerWidget
 class MenuDiagnosticos extends ConsumerWidget {

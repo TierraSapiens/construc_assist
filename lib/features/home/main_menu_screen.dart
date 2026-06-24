@@ -1,4 +1,4 @@
-import 'package:construc_assist/screens/menu_electricidad.dart';
+import 'package:construc_assist/features/electrician/screens/menus/menu_electricidad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';

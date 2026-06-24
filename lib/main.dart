@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';
-import 'package:construc_assist/features/home/ui/screens/main_menu_screen.dart';
+import 'package:construc_assist/features/home/main_menu_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

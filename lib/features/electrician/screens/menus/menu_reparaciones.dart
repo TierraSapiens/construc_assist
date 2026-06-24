@@ -1,15 +1,15 @@
+import 'package:construc_assist/features/electrician/providers/repairs_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- Agregado
-import 'package:construc_assist/core/settings/theme_provider.dart'; // <-- Agregado
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:construc_assist/core/settings/theme_provider.dart';
+import 'package:construc_assist/features/electrician/screens/repairs/guia_interactiva_screen.dart';
+// ----------------------------
 
 class MenuReparaciones extends ConsumerWidget {
-  // <-- Cambiado a ConsumerWidget
   const MenuReparaciones({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // <-- Agregado WidgetRef ref
-    // Escuchamos el modo actual
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
@@ -33,16 +33,27 @@ class MenuReparaciones extends ConsumerWidget {
         children: [
           _buildReparacionCard(
             context,
-            isObra: isObra, // <-- Pasamos el dato
+            isObra: isObra,
             titulo: 'Cambio de Tomacorriente',
             subtitulo: 'Guía paso a paso segura',
             icono: Icons.outlet,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Guía de Tomacorriente: Próximamente...'),
-                ),
-              );
+            onTap: () async {
+              // 1. Cargamos el JSON a través del provider
+              await ref
+                  .read(repairsProvider.notifier)
+                  .cargarGuia(
+                    'assets/2_repairs/electrician/reemplazo_tomacorriente.json',
+                  );
+
+              // 2. Verificamos que el contexto siga vivo después del await (Buena práctica de Flutter)
+              if (context.mounted) {
+                // 3. Navegamos a la pantalla dinámica
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const GuiaInteractivaScreen(),
+                  ),
+                );
+              }
             },
           ),
           const SizedBox(height: 16),

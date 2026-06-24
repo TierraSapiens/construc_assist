@@ -12,7 +12,7 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
   // --- CONTROLADORES TAB 1: MONOFÁSICA ---
   final _vMonoController = TextEditingController(text: '220');
   final _iMonoController = TextEditingController();
-  
+
   // --- CONTROLADORES TAB 2: TRIFÁSICA ---
   final _vTriController = TextEditingController(text: '380');
   final _iTriController = TextEditingController();
@@ -39,10 +39,17 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
     final horas = double.tryParse(_horasController.text) ?? 0.0;
     final precio = double.tryParse(_precioController.text) ?? 0.0;
 
-    final pActiva = PowerMath.calcularPotenciaMonofasica(voltaje: v, corriente: i, factorPotencia: fp);
+    final pActiva = PowerMath.calcularPotenciaMonofasica(
+      voltaje: v,
+      corriente: i,
+      factorPotencia: fp,
+    );
     final pAparente = PowerMath.calcularPotenciaAparente(pActiva, fp);
     final pReactiva = PowerMath.calcularPotenciaReactiva(pActiva, pAparente);
-    final consumo = PowerMath.calcularConsumoKWh(potenciaWatts: pActiva, horasDiarias: horas);
+    final consumo = PowerMath.calcularConsumoKWh(
+      potenciaWatts: pActiva,
+      horasDiarias: horas,
+    );
     final costo = PowerMath.calcularCostoMensual(consumo, precio);
 
     setState(() {
@@ -63,10 +70,17 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
     final horas = double.tryParse(_horasController.text) ?? 0.0;
     final precio = double.tryParse(_precioController.text) ?? 0.0;
 
-    final pActiva = PowerMath.calcularPotenciaTrifasica(voltaje: v, corriente: i, factorPotencia: fp);
+    final pActiva = PowerMath.calcularPotenciaTrifasica(
+      voltaje: v,
+      corriente: i,
+      factorPotencia: fp,
+    );
     final pAparente = PowerMath.calcularPotenciaAparente(pActiva, fp);
     final pReactiva = PowerMath.calcularPotenciaReactiva(pActiva, pAparente);
-    final consumo = PowerMath.calcularConsumoKWh(potenciaWatts: pActiva, horasDiarias: horas);
+    final consumo = PowerMath.calcularConsumoKWh(
+      potenciaWatts: pActiva,
+      horasDiarias: horas,
+    );
     final costo = PowerMath.calcularCostoMensual(consumo, precio);
 
     setState(() {
@@ -116,9 +130,17 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
             children: [
               // ---------------- TAB 1: MONOFÁSICA ----------------
               _buildTabContainer([
-                _buildTextField(_vMonoController, 'Voltaje Monofásico (V)', (_) => _calcularMono()),
+                _buildTextField(
+                  _vMonoController,
+                  'Voltaje Monofásico (V)',
+                  (_) => _calcularMono(),
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(_iMonoController, 'Corriente (A)', (_) => _calcularMono()),
+                _buildTextField(
+                  _iMonoController,
+                  'Corriente (A)',
+                  (_) => _calcularMono(),
+                ),
                 const Divider(height: 40),
                 _buildAdvancedSettings(() => _calcularMono()),
                 const SizedBox(height: 24),
@@ -127,9 +149,17 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
 
               // ---------------- TAB 2: TRIFÁSICA ----------------
               _buildTabContainer([
-                _buildTextField(_vTriController, 'Voltaje Trifásico (V)', (_) => _calcularTri()),
+                _buildTextField(
+                  _vTriController,
+                  'Voltaje Trifásico (V)',
+                  (_) => _calcularTri(),
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(_iTriController, 'Corriente por Fase (A)', (_) => _calcularTri()),
+                _buildTextField(
+                  _iTriController,
+                  'Corriente por Fase (A)',
+                  (_) => _calcularTri(),
+                ),
                 const Divider(height: 40),
                 _buildAdvancedSettings(() => _calcularTri()),
                 const SizedBox(height: 24),
@@ -138,12 +168,23 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
 
               // ---------------- TAB 3: BUSCAR CORRIENTE ----------------
               _buildTabContainer([
-                _buildTextField(_pCurrentController, 'Potencia (W)', (_) => _calcularCorriente()),
+                _buildTextField(
+                  _pCurrentController,
+                  'Potencia (W)',
+                  (_) => _calcularCorriente(),
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(_vCurrentController, 'Voltaje (V)', (_) => _calcularCorriente()),
+                _buildTextField(
+                  _vCurrentController,
+                  'Voltaje (V)',
+                  (_) => _calcularCorriente(),
+                ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('¿Red Trifásica?', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: const Text(
+                    '¿Red Trifásica?',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   value: _isTriCurrent,
                   activeThumbColor: Theme.of(context).colorScheme.primary,
                   onChanged: (value) {
@@ -155,9 +196,17 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
                   },
                 ),
                 const Divider(height: 40),
-                _buildTextField(_fpController, 'Factor de Potencia (Cos φ)', (_) => _calcularCorriente()),
+                _buildTextField(
+                  _fpController,
+                  'Factor de Potencia (Cos φ)',
+                  (_) => _calcularCorriente(),
+                ),
                 const SizedBox(height: 24),
-                _buildSimpleResultBox('Corriente Requerida', _resultCurrent, 'A'),
+                _buildSimpleResultBox(
+                  'Corriente Requerida',
+                  _resultCurrent,
+                  'A',
+                ),
               ]),
             ],
           ),
@@ -170,17 +219,26 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
   Widget _buildTabContainer(List<Widget> children) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, Function(String) onChanged) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    Function(String) onChanged,
+  ) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
       ),
       onChanged: onChanged,
     );
@@ -188,17 +246,36 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
 
   Widget _buildAdvancedSettings(Function() onUpdate) {
     return ExpansionTile(
-      title: const Text('Datos de Consumo y Eficiencia', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: const Text(
+        'Datos de Consumo y Eficiencia',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       subtitle: const Text('FP, Horas de uso y Precio kWh'),
       childrenPadding: const EdgeInsets.symmetric(vertical: 8.0),
       children: [
-        _buildTextField(_fpController, 'Factor de Potencia (Cos φ) - Ej: 0.85', (_) => onUpdate()),
+        _buildTextField(
+          _fpController,
+          'Factor de Potencia (Cos φ) - Ej: 0.85',
+          (_) => onUpdate(),
+        ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField(_horasController, 'Horas / Día', (_) => onUpdate())),
+            Expanded(
+              child: _buildTextField(
+                _horasController,
+                'Horas / Día',
+                (_) => onUpdate(),
+              ),
+            ),
             const SizedBox(width: 16),
-            Expanded(child: _buildTextField(_precioController, 'Precio 1 kWh (\$)', (_) => onUpdate())),
+            Expanded(
+              child: _buildTextField(
+                _precioController,
+                'Precio 1 kWh (\$)',
+                (_) => onUpdate(),
+              ),
+            ),
           ],
         ),
       ],
@@ -211,13 +288,21 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
           const SizedBox(height: 8),
-          Text('${value.toStringAsFixed(2)} $unit', style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold)),
+          Text(
+            '${value.toStringAsFixed(2)} $unit',
+            style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -237,30 +322,57 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text('Potencia Activa Estimada', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          Text('${pActiva.toStringAsFixed(2)} W', style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold)),
-          Text('(${(pActiva / 1000).toStringAsFixed(2)} kW)', style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.primary)),
-          
+          const Text(
+            'Potencia Activa Estimada',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          Text(
+            '${pActiva.toStringAsFixed(2)} W',
+            style: const TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '(${(pActiva / 1000).toStringAsFixed(2)} kW)',
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+
           if (pActiva > 0) ...[
             const Divider(height: 32),
-            _buildResultRow('Potencia Aparente (S)', '${pAparente.toStringAsFixed(2)} VA'),
+            _buildResultRow(
+              'Potencia Aparente (S)',
+              '${pAparente.toStringAsFixed(2)} VA',
+            ),
             const SizedBox(height: 8),
-            _buildResultRow('Potencia Reactiva (Q)', '${pReactiva.toStringAsFixed(2)} VAr'),
+            _buildResultRow(
+              'Potencia Reactiva (Q)',
+              '${pReactiva.toStringAsFixed(2)} VAr',
+            ),
           ],
-          
+
           if (consumo > 0) ...[
             const Divider(height: 32),
-            _buildResultRow('Consumo Estimado (30 días)', '${consumo.toStringAsFixed(2)} kWh'),
+            _buildResultRow(
+              'Consumo Estimado (30 días)',
+              '${consumo.toStringAsFixed(2)} kWh',
+            ),
             if (costo > 0) ...[
               const SizedBox(height: 8),
-              _buildResultRow('Costo Mensual Estimado', '\$${costo.toStringAsFixed(2)}', isBold: true),
-            ]
-          ]
+              _buildResultRow(
+                'Costo Mensual Estimado',
+                '\$${costo.toStringAsFixed(2)}',
+                isBold: true,
+              ),
+            ],
+          ],
         ],
       ),
     );
@@ -271,7 +383,13 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: const TextStyle(fontSize: 14)),
-        Text(value, style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ],
     );
   }

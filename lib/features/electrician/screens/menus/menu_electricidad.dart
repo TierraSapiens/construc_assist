@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- Agregado
 import 'package:construc_assist/core/settings/theme_provider.dart'; // <-- Agregado
-import 'package:construc_assist/features/electrician/ui/screens/electrician_home_screen.dart';
-import 'package:construc_assist/screens/menu_diagnosticos.dart';
-import 'package:construc_assist/screens/menu_reparaciones.dart';
+import 'package:construc_assist/features/electrician/screens/menus/electrician_home_screen.dart';
+import 'package:construc_assist/features/electrician/screens/menus/menu_diagnosticos.dart';
+import 'package:construc_assist/features/electrician/screens/menus/menu_reparaciones.dart';
 
 class MenuElectricidad extends ConsumerWidget {
   // <-- Cambiado a ConsumerWidget

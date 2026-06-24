@@ -1,0 +1,479 @@
+{
+  "schema_version": "1.0.0",
+  "content_version": "1.2.0",
+
+  "id_tarea": "electricidad_reemplazo_tomacorriente_completo",
+
+  "gremio": "electricidad",
+  "categoria": "reemplazo",
+
+  "tags": [
+    "tomacorriente",
+    "enchufe",
+    "contacto",
+    "reemplazo",
+    "hogar",
+    "seguridad"
+  ],
+
+  "nivel_usuario": [
+    "basico",
+    "intermedio"
+  ],
+
+  "idioma": "es-AR",
+
+  "paises_soportados": [
+    "AR",
+    "UY",
+    "CL",
+    "ES",
+    "MX"
+  ],
+
+  "riesgo_general": "medio",
+
+  "duracion_estimada_min": 25,
+
+  "diccionario_busqueda": [
+    "cambiar enchufe",
+    "cambiar toma de corriente",
+    "cambiar toma vieja",
+    "enchufe roto",
+    "toma suelta",
+    "cambiar contacto"
+  ],
+
+  "pre_requisitos": {
+    "tareas": [
+      "instalacion_caja_empotrada"
+    ],
+    "herramientas": [
+      "comprobador_tension"
+    ],
+    "materiales": [
+      "bastidor",
+      "modulo_tomacorriente",
+      "tapa_exterior"
+    ],
+    "conocimientos": [
+      "identificar_tablero_electrico"
+    ]
+  },
+
+  "herramientas_requeridas": [
+    "destornillador_aislado",
+    "comprobador_tension",
+    "alicate_cortante"
+  ],
+
+  "materiales_requeridos": [
+    "bastidor",
+    "modulo_tomacorriente",
+    "tapa_exterior",
+    "tornillos"
+  ],
+
+  "registro": {
+    "guardar_historial": true,
+    "guardar_fecha": true,
+    "guardar_duracion": true,
+    "guardar_fotos": true
+  },
+
+  "tarjeta_inicial": "verificar_materiales",
+
+  "tarjetas": {
+    "verificar_materiales": {
+      "id": "verificar_materiales",
+
+      "tipo": "checklist",
+
+      "titulo": "Preparar materiales",
+
+      "mensaje": "Confirma que tienes todos los materiales necesarios antes de comenzar.",
+
+      "items": [
+        "Bastidor",
+        "Módulo tomacorriente",
+        "Tapa exterior",
+        "Tornillos"
+      ],
+
+      "riesgo": "bajo",
+
+      "tipo_interaccion": "si_no",
+
+      "validacion": {
+        "requiere_checklist_completa": true
+      },
+
+      "opciones": {
+        "si": "verificar_herramientas",
+        "no": "comprar_materiales"
+      }
+    },
+
+    "comprar_materiales": {
+      "id": "comprar_materiales",
+
+      "tipo": "accion",
+
+      "titulo": "Materiales faltantes",
+
+      "mensaje": "Adquiera los materiales necesarios antes de continuar.",
+
+      "riesgo": "bajo",
+
+      "eventos": [
+        {
+          "tipo": "abrir_lista_compras"
+        }
+      ],
+
+      "tipo_interaccion": "finalizar"
+    },
+
+    "verificar_herramientas": {
+      "id": "verificar_herramientas",
+
+      "tipo": "pregunta",
+
+      "titulo": "Herramientas de seguridad",
+
+      "mensaje": "¿Dispone de un comprobador de tensión o multímetro?",
+
+      "multimedia": [
+        {
+          "tipo": "imagen",
+          "url": "assets/img/electricidad/herramientas_medicion.jpg",
+          "alt": "Multímetro y comprobador de tensión"
+        }
+      ],
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "si_no",
+
+      "opciones": {
+        "si": "cortar_energia",
+        "no": "detener_por_seguridad"
+      }
+    },
+
+    "detener_por_seguridad": {
+      "id": "detener_por_seguridad",
+
+      "tipo": "advertencia",
+
+      "titulo": "Seguridad crítica",
+
+      "mensaje": "No continúe sin una herramienta adecuada para verificar la ausencia de tensión.",
+
+      "riesgo": "alto",
+
+      "tipo_interaccion": "finalizar"
+    },
+
+    "cortar_energia": {
+      "id": "cortar_energia",
+
+      "tipo": "seguridad",
+
+      "titulo": "Cortar la energía",
+
+      "mensaje": "Desconecte la alimentación desde el tablero general o la protección correspondiente.",
+
+      "multimedia": [
+        {
+          "tipo": "video",
+          "url": "assets/video/electricidad/como_bajar_termica.mp4",
+          "alt": "Cómo desconectar una llave térmica"
+        }
+      ],
+
+      "riesgo": "alto",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "verificar_ausencia_tension"
+      }
+    },
+
+    "verificar_ausencia_tension": {
+      "id": "verificar_ausencia_tension",
+
+      "tipo": "medicion",
+
+      "titulo": "Verificar ausencia de tensión",
+
+      "mensaje": "Compruebe la ausencia de tensión antes de tocar los conductores.",
+
+      "instrumento": "comprobador_tension",
+
+      "unidad": "V",
+
+      "valor_seguro_maximo": 0,
+
+      "multimedia": [
+        {
+          "tipo": "imagen",
+          "url": "assets/img/electricidad/medicion_neutro_fase.jpg",
+          "alt": "Verificación de tensión"
+        }
+      ],
+
+      "notas_pais": {
+        "AR": "Verifique la normativa AEA vigente y confirme la identificación de conductores mediante medición.",
+        "UY": "Verifique la normativa local y confirme la identificación de conductores mediante medición.",
+        "CL": "Verifique la normativa SEC vigente y confirme la identificación de conductores mediante medición.",
+        "ES": "Verifique el REBT vigente y confirme la identificación de conductores mediante medición.",
+        "MX": "Consulte la NOM-001-SEDE vigente y confirme la identificación de conductores mediante medición."
+      },
+
+      "riesgo": "alto",
+
+      "tipo_interaccion": "si_no",
+
+      "opciones": {
+        "si": "retirar_tapa",
+        "no": "detener_por_tension"
+      }
+    },
+
+    "detener_por_tension": {
+      "id": "detener_por_tension",
+
+      "tipo": "advertencia",
+
+      "titulo": "Tensión detectada",
+
+      "mensaje": "No continúe. La instalación sigue energizada.",
+
+      "riesgo": "alto",
+
+      "tipo_interaccion": "finalizar"
+    },
+
+    "retirar_tapa": {
+      "id": "retirar_tapa",
+
+      "tipo": "instruccion",
+
+      "titulo": "Desmontar el tomacorriente",
+
+      "mensaje": "Retire la tapa y afloje los tornillos de fijación.",
+
+      "multimedia": [
+        {
+          "tipo": "imagen",
+          "url": "assets/img/electricidad/desarmar_tapa.jpg",
+          "alt": "Retirar tapa del tomacorriente"
+        }
+      ],
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "documentar_cableado"
+      }
+    },
+
+    "documentar_cableado": {
+      "id": "documentar_cableado",
+
+      "tipo": "instruccion",
+
+      "titulo": "Documentar conexiones",
+
+      "mensaje": "Tome una fotografía antes de desconectar los conductores.",
+
+      "validacion": {
+        "requiere_foto": true
+      },
+
+      "multimedia": [
+        {
+          "tipo": "imagen",
+          "url": "assets/img/electricidad/ejemplo_foto_cables.jpg",
+          "alt": "Ejemplo de fotografía de referencia"
+        }
+      ],
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "desconectar_conductores"
+      }
+    },
+
+    "desconectar_conductores": {
+      "id": "desconectar_conductores",
+
+      "tipo": "instruccion",
+
+      "titulo": "Desconectar conductores",
+
+      "mensaje": "Afloje los bornes y retire cuidadosamente los conductores.",
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "instalar_nuevo_tomacorriente"
+      }
+    },
+
+    "instalar_nuevo_tomacorriente": {
+      "id": "instalar_nuevo_tomacorriente",
+
+      "tipo": "instruccion",
+
+      "titulo": "Instalar el nuevo tomacorriente",
+
+      "mensaje": "Conecte los conductores siguiendo la fotografía tomada previamente y ajuste correctamente los bornes.",
+
+      "multimedia": [
+        {
+          "tipo": "video",
+          "url": "assets/video/electricidad/conexion_bornes.mp4",
+          "alt": "Conexión correcta de los bornes"
+        }
+      ],
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "montar_tapa"
+      }
+    },
+
+    "montar_tapa": {
+      "id": "montar_tapa",
+
+      "tipo": "instruccion",
+
+      "titulo": "Montar la tapa",
+
+      "mensaje": "Fije el bastidor y coloque la tapa exterior.",
+
+      "riesgo": "bajo",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "restablecer_energia"
+      }
+    },
+
+    "restablecer_energia": {
+      "id": "restablecer_energia",
+
+      "tipo": "accion",
+
+      "titulo": "Restablecer energía",
+
+      "mensaje": "Reactive la alimentación desde el tablero.",
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "verificar_funcionamiento"
+      }
+    },
+
+    "verificar_funcionamiento": {
+      "id": "verificar_funcionamiento",
+
+      "tipo": "pregunta",
+
+      "titulo": "Comprobación final",
+
+      "mensaje": "¿El tomacorriente funciona correctamente y quedó firmemente instalado?",
+
+      "riesgo": "bajo",
+
+      "tipo_interaccion": "si_no",
+
+      "opciones": {
+        "si": "limpieza_final",
+        "no": "escalado_profesional"
+      }
+    },
+
+    "escalado_profesional": {
+      "id": "escalado_profesional",
+
+      "tipo": "advertencia",
+
+      "titulo": "Asistencia profesional recomendada",
+
+      "mensaje": "Es posible que exista un problema interno en la instalación.",
+
+      "eventos": [
+        {
+          "tipo": "abrir_listado_profesionales"
+        }
+      ],
+
+      "riesgo": "medio",
+
+      "tipo_interaccion": "finalizar"
+    },
+
+    "limpieza_final": {
+      "id": "limpieza_final",
+
+      "tipo": "instruccion",
+
+      "titulo": "Limpieza y gestión de residuos",
+
+      "mensaje": "Recupere las herramientas y deje la zona ordenada.",
+
+      "items": [
+        "Desechar sobrantes de cable.",
+        "Recoger tornillos y plásticos.",
+        "Limpiar la superficie.",
+        "Guardar herramientas."
+      ],
+
+      "riesgo": "bajo",
+
+      "tipo_interaccion": "confirmar",
+
+      "opciones": {
+        "confirmar": "tarea_completada"
+      }
+    },
+
+    "tarea_completada": {
+      "id": "tarea_completada",
+
+      "tipo": "fin",
+
+      "titulo": "Trabajo completado",
+
+      "mensaje": "El reemplazo del tomacorriente se completó correctamente.",
+
+      "eventos": [
+        {
+          "tipo": "guardar_historial"
+        }
+      ],
+
+      "riesgo": "bajo",
+
+      "tipo_interaccion": "finalizar"
+    }
+  }
+}

@@ -1,8 +1,8 @@
-import 'package:construc_assist/features/electrician/calculators/cable_section_screen.dart';
-import 'package:construc_assist/features/electrician/calculators/voltage_drop_screen.dart';
+import 'package:construc_assist/features/electrician/screens/calculators/cable_section_screen.dart';
+import 'package:construc_assist/features/electrician/screens/calculators/voltage_drop_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:construc_assist/features/electrician/calculators/ohms_law_screen.dart';
-import 'package:construc_assist/features/electrician/calculators/power_calculator_screen.dart';
+import 'package:construc_assist/features/electrician/screens/calculators/ohms_law_screen.dart';
+import 'package:construc_assist/features/electrician/screens/calculators/power_calculator_screen.dart';
 
 class ElectricianHomeScreen extends StatelessWidget {
   const ElectricianHomeScreen({super.key});

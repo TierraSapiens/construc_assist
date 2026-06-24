@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/data_service.dart';
-import '../models/diagnostic_model.dart';
+import '../../../../../services/data_service.dart';
+import '../../../../../models/diagnostic_model.dart';
 
 class PantallaDiagnosticoBreaker extends StatefulWidget {
   const PantallaDiagnosticoBreaker({super.key});

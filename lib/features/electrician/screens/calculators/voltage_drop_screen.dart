@@ -16,7 +16,7 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
 
   bool _esCobre = true;
   bool _esTrifasica = false;
-  
+
   double _caidaVolts = 0.0;
   double _caidaPorcentaje = 0.0;
 
@@ -54,9 +54,30 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
             children: [
               Row(
                 children: [
-                  Expanded(child: _buildSwitch('Material', _esCobre ? 'Cobre' : 'Aluminio', _esCobre, (v) => setState(() { _esCobre = v; _calcular(); }))),
+                  Expanded(
+                    child: _buildSwitch(
+                      'Material',
+                      _esCobre ? 'Cobre' : 'Aluminio',
+                      _esCobre,
+                      (v) => setState(() {
+                        _esCobre = v;
+                        _calcular();
+                      }),
+                    ),
+                  ),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildSwitch('Red', _esTrifasica ? 'Trifásica' : 'Monofásica', _esTrifasica, (v) => setState(() { _esTrifasica = v; _voltajeController.text = v ? '380' : '220'; _calcular(); }))),
+                  Expanded(
+                    child: _buildSwitch(
+                      'Red',
+                      _esTrifasica ? 'Trifásica' : 'Monofásica',
+                      _esTrifasica,
+                      (v) => setState(() {
+                        _esTrifasica = v;
+                        _voltajeController.text = v ? '380' : '220';
+                        _calcular();
+                      }),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -66,9 +87,13 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(child: _buildTextField(_longitudController, 'Longitud (m)')),
+                  Expanded(
+                    child: _buildTextField(_longitudController, 'Longitud (m)'),
+                  ),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTextField(_voltajeController, 'Voltaje (V)')),
+                  Expanded(
+                    child: _buildTextField(_voltajeController, 'Voltaje (V)'),
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -80,15 +105,26 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
     );
   }
 
-  Widget _buildSwitch(String label, String value, bool state, Function(bool) onChanged) {
+  Widget _buildSwitch(
+    String label,
+    String value,
+    bool state,
+    Function(bool) onChanged,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         children: [
           Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           SwitchListTile(
-            title: Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            title: Text(
+              value,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
             value: state,
             onChanged: onChanged,
             contentPadding: EdgeInsets.zero,
@@ -103,16 +139,23 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ),
       onChanged: (_) => _calcular(),
     );
   }
 
   Widget _buildResultBox() {
-    if (_seccionController.text.isEmpty || _corrienteController.text.isEmpty || _longitudController.text.isEmpty) {
+    if (_seccionController.text.isEmpty ||
+        _corrienteController.text.isEmpty ||
+        _longitudController.text.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     // Alerta visual si la caída supera el 3% o 5%
     Color colorResultado = Theme.of(context).colorScheme.primary;
     if (_caidaPorcentaje > 5.0) {
@@ -132,13 +175,33 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
         children: [
           const Text('Caída de Tensión Total', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
-          Text('${_caidaVolts.toStringAsFixed(2)} V', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: colorResultado)),
-          Text('(${_caidaPorcentaje.toStringAsFixed(2)} %)', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorResultado)),
+          Text(
+            '${_caidaVolts.toStringAsFixed(2)} V',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: colorResultado,
+            ),
+          ),
+          Text(
+            '(${_caidaPorcentaje.toStringAsFixed(2)} %)',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: colorResultado,
+            ),
+          ),
           if (_caidaPorcentaje > 5.0)
             const Padding(
               padding: EdgeInsets.only(top: 16.0),
-              child: Text('⚠️ Caída severa. Aumentá la sección del cable.', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-            )
+              child: Text(
+                '⚠️ Caída severa. Aumentá la sección del cable.',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
         ],
       ),
     );
