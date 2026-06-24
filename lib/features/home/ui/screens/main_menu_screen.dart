@@ -1,4 +1,4 @@
-import 'package:construc_assist/features/electrician/ui/screens/electrician_home_screen.dart';
+import 'package:construc_assist/screens/menu_electricidad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';
@@ -52,21 +52,21 @@ class MainMenuScreen extends ConsumerWidget {
                 foregroundColor: Theme.of(context).scaffoldBackgroundColor,
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // 2. BÚSQUEDA MANUAL
             Text(
               'Búsqueda Manual',
               style: TextStyle(
-                fontSize: 22, 
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            
+
             // Lista de Gremios
             Expanded(
               child: GridView.count(
@@ -87,7 +87,11 @@ class MainMenuScreen extends ConsumerWidget {
   }
 
   // Panel de configuración que emerge desde abajo
-  void _showSettingsBottomSheet(BuildContext context, WidgetRef ref, bool isObraNow) {
+  void _showSettingsBottomSheet(
+    BuildContext context,
+    WidgetRef ref,
+    bool isObraNow,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -112,26 +116,36 @@ class MainMenuScreen extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              
+
               // Opción Modo Obra
               ListTile(
                 leading: const Text('👷', style: TextStyle(fontSize: 24)),
-                title: const Text('Modo Obra', style: TextStyle(fontWeight: FontWeight.bold)),
+                title: const Text(
+                  'Modo Obra',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 subtitle: const Text('Alto contraste para exteriores'),
-                trailing: isObraNow ? const Icon(Icons.check_circle, color: Colors.green) : null,
+                trailing: isObraNow
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : null,
                 onTap: () {
                   ref.read(isObraModeProvider.notifier).setMode(true);
                   Navigator.pop(context); // Cierra el panel
                 },
               ),
               const Divider(),
-              
+
               // Opción Modo Oficina
               ListTile(
                 leading: const Text('👔', style: TextStyle(fontSize: 24)),
-                title: const Text('Modo Oficina', style: TextStyle(fontWeight: FontWeight.bold)),
+                title: const Text(
+                  'Modo Oficina',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 subtitle: const Text('Diseño elegante para interiores'),
-                trailing: !isObraNow ? const Icon(Icons.check_circle, color: Colors.green) : null,
+                trailing: !isObraNow
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : null,
                 onTap: () {
                   ref.read(isObraModeProvider.notifier).setMode(false);
                   Navigator.pop(context); // Cierra el panel
@@ -145,22 +159,33 @@ class MainMenuScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGremioButton(BuildContext context, String emoji, String title, bool isActive) {
+  Widget _buildGremioButton(
+    BuildContext context,
+    String emoji,
+    String title,
+    bool isActive,
+  ) {
     return ElevatedButton(
-      onPressed: isActive ? () {
-        if (title == 'Electricidad') {
-          // Navegamos a la pantalla de Electricidad
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ElectricianHomeScreen()),
-          );
-        } else {
-          // Para los otros gremios que aún no están listos
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('El módulo $title estará disponible pronto.')),
-          );
-        }
-      } : null,
+      onPressed: isActive
+          ? () {
+              if (title == 'Electricidad') {
+                // Navegamos al nuevo Menú Intermedio de Electricidad
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MenuElectricidad(),
+                  ),
+                );
+              } else {
+                // Para los otros gremios que aún no están listos
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('El módulo $title estará disponible pronto.'),
+                  ),
+                );
+              }
+            }
+          : null,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -170,7 +195,11 @@ class MainMenuScreen extends ConsumerWidget {
         children: [
           Text(emoji, style: const TextStyle(fontSize: 48)),
           const SizedBox(height: 10),
-          Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18)),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 18),
+          ),
         ],
       ),
     );

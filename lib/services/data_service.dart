@@ -29,9 +29,8 @@ class DataService {
   // ¡NUEVA FUNCIÓN! Para leer el árbol de diagnóstico interactivo
   Future<DiagnosticoCompletoModel?> obtenerDiagnosticoBreaker() async {
     try {
-      // ATENCIÓN: Verificá que esta ruta coincida exactamente con tus carpetas a la izquierda
       final String respuesta = await rootBundle.loadString(
-        'assets/1_diagnostics/electrician/protecciones/breaker_trip.json',
+        'assets/diagnostics/electrician/protecciones/breaker_trip.json',
       );
 
       final Map<String, dynamic> datosDecodificados = json.decode(respuesta);
