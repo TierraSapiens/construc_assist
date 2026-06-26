@@ -25,4 +25,28 @@ class AiService {
       return 'ERROR TÉCNICO: $e';
     }
   }
+
+  // --- NUEVA FUNCIÓN PARA PRESUPUESTOS ---
+  Future<String?> generarPresupuesto(String descripcionTrabajo) async {
+    try {
+      // A diferencia del chat, acá creamos un modelo de un solo uso
+      // porque solo necesitamos una pregunta y una respuesta directa.
+      final modeloEstructurado = GenerativeModel(
+        model: 'gemini-3.5-flash',
+        apiKey: _apiKey,
+        systemInstruction: Content.system(AiConfig.budgetAiSystemPrompt),
+        generationConfig: GenerationConfig(
+          responseMimeType: 'application/json', // Le forzamos el formato
+        ),
+      );
+
+      final response = await modeloEstructurado.generateContent([
+        Content.text(descripcionTrabajo),
+      ]);
+
+      return response.text;
+    } catch (e) {
+      return 'ERROR TÉCNICO: $e';
+    }
+  }
 }

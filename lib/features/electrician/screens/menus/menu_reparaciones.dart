@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:construc_assist/core/settings/theme_provider.dart';
 import 'package:construc_assist/features/electrician/screens/repairs/guia_interactiva_screen.dart';
-// ----------------------------
+import 'package:construc_assist/features/presupuestos/screens/presupuesto_screen.dart';
 
 class MenuReparaciones extends ConsumerWidget {
   const MenuReparaciones({super.key});
@@ -71,6 +71,26 @@ class MenuReparaciones extends ConsumerWidget {
               );
             },
           ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.request_quote),
+            label: const Text('Ir al Presupuesto (Prueba)'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              backgroundColor: Colors.blue, // Podés cambiar el color
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              // ACÁ ADENTRO van las acciones. Al tocar el botón, se ejecuta esto:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const PresupuestoScreen(), // <-- Sin doble paréntesis
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
