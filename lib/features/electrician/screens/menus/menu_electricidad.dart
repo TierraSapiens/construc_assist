@@ -4,6 +4,7 @@ import 'package:construc_assist/core/settings/theme_provider.dart'; // <-- Agreg
 import 'package:construc_assist/features/electrician/screens/menus/electrician_home_screen.dart';
 import 'package:construc_assist/features/electrician/screens/menus/menu_diagnosticos.dart';
 import 'package:construc_assist/features/electrician/screens/menus/menu_reparaciones.dart';
+import 'package:construc_assist/features/presupuestos/screens/presupuesto_screen.dart';
 
 class MenuElectricidad extends ConsumerWidget {
   // <-- Cambiado a ConsumerWidget
@@ -85,6 +86,24 @@ class MenuElectricidad extends ConsumerWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ElectricianHomeScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // OPCION C: HERRAMIENTAS
+            _buildMenuCard(
+              context: context,
+              isObra: isObra,
+              title: 'D) PRESUPUESTOS',
+              subtitle: 'Cálculo de cables, tensión y Ley de Ohm',
+              icon: Icons.calculate_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PresupuestoScreen(),
                   ),
                 );
               },
