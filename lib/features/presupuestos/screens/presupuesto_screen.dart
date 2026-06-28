@@ -134,10 +134,22 @@ class PresupuestoScreen extends ConsumerWidget {
             child: Column(
               children: [
                 _FilaTotal(titulo: 'Subtotal:', valor: presupuesto.subtotal),
-                _FilaTotal(
-                  titulo:
-                      'Ganancia Extra (${presupuesto.porcentajeGananciaExtra}%):',
-                  valor: presupuesto.montoGanancia,
+                InkWell(
+                  onTap: () {
+                    mostrarAjusteGanancia(
+                      context,
+                      ref,
+                      presupuesto.porcentajeGananciaExtra,
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: _FilaTotal(
+                      titulo:
+                          'Ganancia Extra (${presupuesto.porcentajeGananciaExtra.toInt()}%): ✏️',
+                      valor: presupuesto.montoGanancia,
+                    ),
+                  ),
                 ),
                 const Divider(color: Colors.black26), // Divisor más oscuro
                 _FilaTotal(
@@ -201,6 +213,107 @@ class _FilaTotal extends StatelessWidget {
       ),
     );
   }
+}
+
+// --- HERRAMIENTA: PANEL EMERGENTE DE GANANCIA ---
+void mostrarAjusteGanancia(
+  BuildContext context,
+  WidgetRef ref,
+  double gananciaActual,
+) {
+  double valorTemporal = gananciaActual;
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setStateBottomSheet) {
+          return Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Ajustar Ganancia Extra',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // El número gigante que cambia al mover la barra
+                Text(
+                  '${valorTemporal.toInt()}%',
+                  style: const TextStyle(
+                    fontSize: 56,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.amber,
+                  ),
+                ),
+                // La barra deslizable (apta para guantes)
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 16.0,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 18.0,
+                    ),
+                  ),
+                  child: Slider(
+                    value: valorTemporal,
+                    min: 0,
+                    max: 100, // Podés subirlo a 200 si hace falta
+                    divisions: 20, // Salta de a 5% (5, 10, 15...)
+                    activeColor: Colors.amber,
+                    inactiveColor: Colors.grey[300],
+                    onChanged: (nuevoValor) {
+                      setStateBottomSheet(() {
+                        valorTemporal = nuevoValor;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Botón gigante para confirmar
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.amber,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      // Acá le avisamos al Provider (el motor) que guarde el nuevo número
+                      ref
+                          .read(presupuestoProvider.notifier)
+                          .actualizarGanancia(valorTemporal);
+                      Navigator.pop(context); // Cierra el panel
+                    },
+                    child: const Text(
+                      'APLICAR GANANCIA',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 // --- FÁBRICA DE LA SÚPER CAJA DE HERRAMIENTAS (PUNTO 8) ---
