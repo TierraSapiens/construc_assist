@@ -72,6 +72,7 @@ class PresupuestoNotifier extends StateNotifier<Presupuesto> {
       final respuestaString = await _aiService.generarPresupuesto(
         promptDelUsuario,
       );
+      debugPrint("🔍 REPORTE SECRETO DEL SERVICIO: $respuestaString");
 
       // --- 🛡️ NUEVO ESCUDO DE SEGURIDAD ACÁ 🛡️ ---
       // Si la respuesta contiene un mensaje de error o el servidor está saturado, frenamos todo.

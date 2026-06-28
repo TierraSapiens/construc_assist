@@ -7,13 +7,23 @@ class PresupuestoScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Aquí nos conectamos al "cerebro".
     final presupuesto = ref.watch(presupuestoProvider);
 
     return Scaffold(
+      backgroundColor: Colors.white, // ☀️ MODO OBRA: Fondo blanco puro
       appBar: AppBar(
-        title: const Text('Presupuesto de Obra'),
+        backgroundColor: Colors.amber, // ☀️ MODO OBRA: Techo amarillo
+        title: const Text(
+          'Presupuesto de Obra',
+          style: TextStyle(
+            color: Colors.black, // Letra negra
+            fontWeight: FontWeight.w900, // Letra extra gruesa
+          ),
+        ),
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ), // Flecha de volver negra
       ),
       body: Column(
         children: [
@@ -24,7 +34,12 @@ class PresupuestoScreen extends ConsumerWidget {
                     child: Text(
                       'El presupuesto está vacío.\nAgregá ítems o usá la I.A.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                        fontWeight:
+                            FontWeight.bold, // ☀️ Letras visibles sin datos
+                      ),
                     ),
                   )
                 : ListView.builder(
@@ -32,17 +47,39 @@ class PresupuestoScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final item = presupuesto.items[index];
                       return Card(
+                        color: Colors.white, // Fondo de la tarjeta blanco
+                        elevation: 2, // Sombra suave para despegarla del fondo
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            color: Colors.black12,
+                            width: 1,
+                          ), // Borde gris sutil
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         margin: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 0,
+                          ),
                           title: Text(
                             item.nombre,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Colors.black, // ☀️ MODO OBRA
+                              fontWeight: FontWeight.w900, // Extra negro
+                              fontSize: 13,
+                            ),
                           ),
                           subtitle: Text(
                             '${item.cantidad} ${item.unidad} x \$${item.precioUnitario}',
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -50,17 +87,18 @@ class PresupuestoScreen extends ConsumerWidget {
                               Text(
                                 '\$${item.total.toStringAsFixed(2)}',
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900, // Extra negro
+                                  fontSize: 14,
                                 ),
                               ),
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
                                   color: Colors.red,
+                                  size: 20,
                                 ),
                                 onPressed: () {
-                                  // Le avisamos al cerebro que borre este ítem
                                   ref
                                       .read(presupuestoProvider.notifier)
                                       .eliminarItem(item.id);
@@ -77,18 +115,21 @@ class PresupuestoScreen extends ConsumerWidget {
           // ZONA INFERIOR: Los Totales (La caja registradora)
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              boxShadow: const [
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.amber,
+                  width: 4,
+                ), // ☀️ MODO OBRA: Línea amarilla gruesa arriba
+              ),
+              boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
                   offset: Offset(0, -5),
                 ),
               ],
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
             ),
             child: Column(
               children: [
@@ -98,7 +139,7 @@ class PresupuestoScreen extends ConsumerWidget {
                       'Ganancia Extra (${presupuesto.porcentajeGananciaExtra}%):',
                   valor: presupuesto.montoGanancia,
                 ),
-                const Divider(),
+                const Divider(color: Colors.black26), // Divisor más oscuro
                 _FilaTotal(
                   titulo: 'TOTAL FINAL:',
                   valor: presupuesto.totalFinal,
@@ -109,10 +150,8 @@ class PresupuestoScreen extends ConsumerWidget {
           ),
         ],
       ),
-      // ACÁ ABAJO ESTÁ LA MAGIA, BIEN ACOMODADA AL FINAL DEL SCAFFOLD:
       bottomNavigationBar: SafeArea(
         child: Padding(
-          // Esto ayuda a que el teclado del celu no tape la caja de texto
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
@@ -145,16 +184,17 @@ class _FilaTotal extends StatelessWidget {
           Text(
             titulo,
             style: TextStyle(
+              color: Colors.black, // ☀️ MODO OBRA
               fontSize: esTotal ? 18 : 14,
-              fontWeight: esTotal ? FontWeight.bold : FontWeight.normal,
+              fontWeight: esTotal ? FontWeight.w900 : FontWeight.bold,
             ),
           ),
           Text(
             '\$${valor.toStringAsFixed(2)}',
             style: TextStyle(
+              color: Colors.black, // ☀️ MODO OBRA
               fontSize: esTotal ? 20 : 14,
-              fontWeight: esTotal ? FontWeight.bold : FontWeight.normal,
-              color: esTotal ? Colors.green : null,
+              fontWeight: esTotal ? FontWeight.w900 : FontWeight.bold,
             ),
           ),
         ],
@@ -163,7 +203,7 @@ class _FilaTotal extends StatelessWidget {
   }
 }
 
-// --- DESDE ACÁ EMPIEZA LA FÁBRICA DE LA BARRA DE IA (AHORA CON RUEDITA) ---
+// --- FÁBRICA DE LA SÚPER CAJA DE HERRAMIENTAS (PUNTO 8) ---
 class AiInputBar extends ConsumerStatefulWidget {
   const AiInputBar({super.key});
 
@@ -173,7 +213,7 @@ class AiInputBar extends ConsumerStatefulWidget {
 
 class _AiInputBarState extends ConsumerState<AiInputBar> {
   final _controller = TextEditingController();
-  bool _isAiThinking = false; // Variable para saber si la IA está trabajando
+  bool _isAiThinking = false;
 
   @override
   void dispose() {
@@ -184,69 +224,171 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-      color: Colors.grey[900],
-      child: Row(
+      // Fondo gris clarito tipo chapa para que resalte la zona de control
+      color: Colors.grey[200],
+      padding: const EdgeInsets.only(
+        left: 12.0,
+        right: 12.0,
+        top: 16.0,
+        bottom: 24.0, // Más espacio abajo para los dedos/guantes
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Que la caja ocupe solo lo necesario
         children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              style: const TextStyle(color: Colors.white),
-              enabled: !_isAiThinking, // Bloqueamos el texto si está pensando
-              decoration: InputDecoration(
-                hintText: _isAiThinking
-                    ? 'Calculando materiales y mano de obra...'
-                    : 'Ej: Instalar 3 tomas y 1 ventilador...',
-                hintStyle: const TextStyle(color: Colors.grey),
-                filled: true,
-                fillColor: Colors.black,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+          // FILA 1: La caja de texto y el botón de enviar (Lo que ya teníamos)
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  enabled: !_isAiThinking,
+                  decoration: InputDecoration(
+                    hintText: _isAiThinking
+                        ? 'Calculando materiales...'
+                        : 'Ej: Instalar 3 tomas y 1 ventilador...',
+                    hintStyle: const TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white, // Fondo blanco para que contraste
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.black26,
+                        width: 2,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: _isAiThinking ? Colors.grey[400] : Colors.amber,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.black12,
+                    width: 2,
+                  ), // Borde resistente
+                ),
+                child: IconButton(
+                  iconSize: 32, // ☀️ MODO OBRA: Botón de flecha más grande
+                  icon: _isAiThinking
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 3.5, // Ruedita más gruesa
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward, color: Colors.black),
+                  onPressed: _isAiThinking
+                      ? null
+                      : () async {
+                          if (_controller.text.isNotEmpty) {
+                            setState(() {
+                              _isAiThinking = true;
+                            });
+                            await ref
+                                .read(presupuestoProvider.notifier)
+                                .procesarTrabajoConIA(_controller.text);
+                            if (mounted) {
+                              setState(() {
+                                _isAiThinking = false;
+                              });
+                              _controller.clear();
+                            }
+                          }
+                        },
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: _isAiThinking ? Colors.grey : Colors.amber,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: _isAiThinking
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                        strokeWidth: 2.5,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome, color: Colors.black),
-              onPressed: _isAiThinking
-                  ? null
-                  : () async {
-                      if (_controller.text.isNotEmpty) {
-                        // 1. Prendemos la ruedita
-                        setState(() {
-                          _isAiThinking = true;
-                        });
 
-                        // 2. Llamamos a Gemini y esperamos
-                        await ref
-                            .read(presupuestoProvider.notifier)
-                            .procesarTrabajoConIA(_controller.text);
+          const SizedBox(
+            height: 16,
+          ), // Espacio entre el texto y los botones nuevos
+          // FILA 2: LOS BOTONES GIGANTES DE HERRAMIENTAS
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _BotonHerramienta(
+                icono: Icons.camera_alt,
+                texto: 'FOTO',
+                alPresionar: () {
+                  debugPrint("📸 Botón CÁMARA presionado (Próximamente)");
+                },
+              ),
+              _BotonHerramienta(
+                icono: Icons.mic,
+                texto: 'AUDIO',
+                alPresionar: () {
+                  debugPrint("🎤 Botón MICRÓFONO presionado (Próximamente)");
+                },
+              ),
+              _BotonHerramienta(
+                icono: Icons
+                    .share, // Ícono temporal hasta que pongamos el de WhatsApp
+                texto: 'ENVIAR',
+                alPresionar: () {
+                  debugPrint("📤 Botón ENVIAR presionado (Próximamente)");
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-                        // 3. Apagamos la ruedita y limpiamos
-                        if (mounted) {
-                          setState(() {
-                            _isAiThinking = false;
-                          });
-                          _controller.clear();
-                        }
-                      }
-                    },
+// --- MINI MOLDURA PARA FABRICAR BOTONES GIGANTES ---
+// Usamos esto para no repetir código 3 veces.
+class _BotonHerramienta extends StatelessWidget {
+  final IconData icono;
+  final String texto;
+  final VoidCallback alPresionar;
+
+  const _BotonHerramienta({
+    required this.icono,
+    required this.texto,
+    required this.alPresionar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // Fondo del botón
+        foregroundColor: Colors.black, // Color cuando lo apretás
+        elevation: 3, // Sombrita
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(
+            color: Colors.black12,
+            width: 2,
+          ), // Borde fuerte
+        ),
+      ),
+      onPressed: alPresionar,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icono, size: 36, color: Colors.black87), // Ícono GIGANTE
+          const SizedBox(height: 6),
+          Text(
+            texto,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+              color: Colors.black,
             ),
           ),
         ],
