@@ -1,6 +1,10 @@
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/presupuesto_provider.dart';
+
+// --- NUEVO: ESTE ES EL INTERRUPTOR PARA CAMBIAR DE LENTE (A o B) ---
+final vistaDetalladaProvider = StateProvider<bool>((ref) => true);
 
 class PresupuestoScreen extends ConsumerWidget {
   const PresupuestoScreen({super.key});
@@ -8,26 +12,23 @@ class PresupuestoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final presupuesto = ref.watch(presupuestoProvider);
+    // Leemos en qué modo estamos (True = A, False = B)
+    final esVistaDetallada = ref.watch(vistaDetalladaProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white, // ☀️ MODO OBRA: Fondo blanco puro
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.amber, // ☀️ MODO OBRA: Techo amarillo
+        backgroundColor: Colors.amber,
         title: const Text(
           'Presupuesto de Obra',
-          style: TextStyle(
-            color: Colors.black, // Letra negra
-            fontWeight: FontWeight.w900, // Letra extra gruesa
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ), // Flecha de volver negra
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
-          // ZONA SUPERIOR: La lista de materiales/mano de obra
+          // ZONA SUPERIOR: La lista o el resumen
           Expanded(
             child: presupuesto.items.isEmpty
                 ? const Center(
@@ -37,78 +38,150 @@ class PresupuestoScreen extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black87,
-                        fontWeight:
-                            FontWeight.bold, // ☀️ Letras visibles sin datos
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   )
-                : ListView.builder(
-                    itemCount: presupuesto.items.length,
-                    itemBuilder: (context, index) {
-                      final item = presupuesto.items[index];
-                      return Card(
-                        color: Colors.white, // Fondo de la tarjeta blanco
-                        elevation: 2, // Sombra suave para despegarla del fondo
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.black12,
-                            width: 1,
-                          ), // Borde gris sutil
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 0,
-                          ),
-                          title: Text(
-                            item.nombre,
-                            style: const TextStyle(
-                              color: Colors.black, // ☀️ MODO OBRA
-                              fontWeight: FontWeight.w900, // Extra negro
-                              fontSize: 13,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '${item.cantidad} ${item.unidad} x \$${item.precioUnitario}',
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '\$${item.total.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w900, // Extra negro
-                                  fontSize: 14,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                  size: 20,
+                : Column(
+                    children: [
+                      // --- NUEVA BOTONERA A / B ---
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: esVistaDetallada
+                                      ? Colors.amber
+                                      : Colors.grey[300],
+                                  foregroundColor: Colors.black,
+                                  elevation: esVistaDetallada ? 3 : 0,
                                 ),
                                 onPressed: () {
+                                  // Cambiamos a la Vista A
                                   ref
-                                      .read(presupuestoProvider.notifier)
-                                      .eliminarItem(item.id);
+                                          .read(vistaDetalladaProvider.notifier)
+                                          .state =
+                                      true;
                                 },
+                                child: const Text(
+                                  'DETALLE',
+                                  style: TextStyle(fontWeight: FontWeight.w900),
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !esVistaDetallada
+                                      ? Colors.amber
+                                      : Colors.grey[300],
+                                  foregroundColor: Colors.black,
+                                  elevation: !esVistaDetallada ? 3 : 0,
+                                ),
+                                onPressed: () {
+                                  // Cambiamos a la Vista B
+                                  ref
+                                          .read(vistaDetalladaProvider.notifier)
+                                          .state =
+                                      false;
+                                },
+                                child: const Text(
+                                  'RESUMEN',
+                                  style: TextStyle(fontWeight: FontWeight.w900),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      // --- CONTENIDO SEGÚN EL LENTE ELEGIDO ---
+                      Expanded(
+                        child: esVistaDetallada
+                            // VISTA A: LA LISTA DE SIEMPRE
+                            ? ListView.builder(
+                                itemCount: presupuesto.items.length,
+                                itemBuilder: (context, index) {
+                                  final item = presupuesto.items[index];
+                                  return Card(
+                                    color: Colors.white,
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        color: Colors.black12,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 0,
+                                          ),
+                                      title: Text(
+                                        item.nombre,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        '${item.cantidad} ${item.unidad} x \$${item.precioUnitario}',
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '\$${item.total.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 20,
+                                            ),
+                                            onPressed: () {
+                                              ref
+                                                  .read(
+                                                    presupuestoProvider
+                                                        .notifier,
+                                                  )
+                                                  .eliminarItem(item.id);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            // VISTA B: LA NUEVA TARJETA GLOBAL
+                            // VISTA B: LA NUEVA TARJETA GLOBAL (Ahora con Scroll para evitar desbordes)
+                            : SingleChildScrollView(
+                                child: _VistaResumida(
+                                  subtotal: presupuesto.subtotal,
+                                ),
+                              ),
+                      ),
+                    ],
                   ),
           ),
 
@@ -117,12 +190,7 @@ class PresupuestoScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.amber,
-                  width: 4,
-                ), // ☀️ MODO OBRA: Línea amarilla gruesa arriba
-              ),
+              border: Border(top: BorderSide(color: Colors.amber, width: 4)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
@@ -151,7 +219,7 @@ class PresupuestoScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const Divider(color: Colors.black26), // Divisor más oscuro
+                const Divider(color: Colors.black26),
                 _FilaTotal(
                   titulo: 'TOTAL FINAL:',
                   valor: presupuesto.totalFinal,
@@ -168,6 +236,85 @@ class PresupuestoScreen extends ConsumerWidget {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: const AiInputBar(),
+        ),
+      ),
+    );
+  }
+}
+
+// --- NUEVO WIDGET: EL DISEÑO DE LA VISTA RESUMIDA (B) ---
+class _VistaResumida extends StatelessWidget {
+  final double subtotal;
+
+  const _VistaResumida({required this.subtotal});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      elevation: 3,
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: Colors.black12, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Se adapta al texto
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.assignment_turned_in, color: Colors.amber, size: 36),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'SERVICIOS DE OBRA',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Ejecución de trabajos según lo presupuestado. Este importe incluye la provisión completa de materiales, insumos y la mano de obra especializada necesaria para la finalización de las tareas solicitadas.',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+                height: 1.5, // Le da aire a las líneas del texto
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Divider(color: Colors.black26, thickness: 2),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Subtotal global:',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  '\$${subtotal.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -196,7 +343,7 @@ class _FilaTotal extends StatelessWidget {
           Text(
             titulo,
             style: TextStyle(
-              color: Colors.black, // ☀️ MODO OBRA
+              color: Colors.black,
               fontSize: esTotal ? 18 : 14,
               fontWeight: esTotal ? FontWeight.w900 : FontWeight.bold,
             ),
@@ -204,8 +351,11 @@ class _FilaTotal extends StatelessWidget {
           Text(
             '\$${valor.toStringAsFixed(2)}',
             style: TextStyle(
-              color: Colors.black, // ☀️ MODO OBRA
-              fontSize: esTotal ? 20 : 14,
+              color: esTotal
+                  ? Colors.green[700]
+                  : Colors
+                        .black, // Le dimos un toque verde al total final para resaltar
+              fontSize: esTotal ? 22 : 14,
               fontWeight: esTotal ? FontWeight.w900 : FontWeight.bold,
             ),
           ),
@@ -246,7 +396,6 @@ void mostrarAjusteGanancia(
                   ),
                 ),
                 const SizedBox(height: 16),
-                // El número gigante que cambia al mover la barra
                 Text(
                   '${valorTemporal.toInt()}%',
                   style: const TextStyle(
@@ -255,7 +404,6 @@ void mostrarAjusteGanancia(
                     color: Colors.amber,
                   ),
                 ),
-                // La barra deslizable (apta para guantes)
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 16.0,
@@ -266,8 +414,8 @@ void mostrarAjusteGanancia(
                   child: Slider(
                     value: valorTemporal,
                     min: 0,
-                    max: 100, // Podés subirlo a 200 si hace falta
-                    divisions: 20, // Salta de a 5% (5, 10, 15...)
+                    max: 100,
+                    divisions: 20,
                     activeColor: Colors.amber,
                     inactiveColor: Colors.grey[300],
                     onChanged: (nuevoValor) {
@@ -278,7 +426,6 @@ void mostrarAjusteGanancia(
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Botón gigante para confirmar
                 SizedBox(
                   width: double.infinity,
                   height: 60,
@@ -291,11 +438,10 @@ void mostrarAjusteGanancia(
                       ),
                     ),
                     onPressed: () {
-                      // Acá le avisamos al Provider (el motor) que guarde el nuevo número
                       ref
                           .read(presupuestoProvider.notifier)
                           .actualizarGanancia(valorTemporal);
-                      Navigator.pop(context); // Cierra el panel
+                      Navigator.pop(context);
                     },
                     child: const Text(
                       'APLICAR GANANCIA',
@@ -334,21 +480,70 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
     super.dispose();
   }
 
+  // --- NUEVO CABLEADO: LA FUNCIÓN DE COMPARTIR ---
+  void _compartirPresupuesto() {
+    // Leemos los datos actuales
+    final presupuesto = ref.read(presupuestoProvider);
+    final esVistaDetallada = ref.read(vistaDetalladaProvider);
+
+    // Si no hay nada, no hacemos nada
+    if (presupuesto.items.isEmpty) return;
+
+    // Empezamos a redactar el mensaje de WhatsApp usando un StringBuffer
+    StringBuffer texto = StringBuffer();
+    texto.writeln('📋 *PRESUPUESTO DE OBRA* 📋');
+    texto.writeln('');
+
+    if (esVistaDetallada) {
+      // SI ESTÁ EN MODO "A": Mandamos todos los materiales y mano de obra
+      texto.writeln('🛠️ *Detalle de ítems:*');
+      for (var item in presupuesto.items) {
+        texto.writeln('▪️ ${item.nombre}');
+        texto.writeln(
+          '   ${item.cantidad} ${item.unidad} x \$${item.precioUnitario} = \$${item.total.toStringAsFixed(2)}',
+        );
+      }
+    } else {
+      // SI ESTÁ EN MODO "B": Mandamos el texto profesional y cerrado
+      texto.writeln('✅ *SERVICIOS DE OBRA*');
+      texto.writeln(
+        'Ejecución de trabajos según lo presupuestado. Incluye la provisión completa de materiales, insumos y la mano de obra especializada necesaria.',
+      );
+    }
+
+    texto.writeln('');
+    texto.writeln('------------------------');
+    texto.writeln('Subtotal: \$${presupuesto.subtotal.toStringAsFixed(2)}');
+
+    // Si agregaste ganancia extra, la mostramos sutilmente como un "Ajuste"
+    if (presupuesto.montoGanancia > 0) {
+      texto.writeln(
+        'Ajuste: \$${presupuesto.montoGanancia.toStringAsFixed(2)}',
+      );
+    }
+
+    texto.writeln(
+      '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
+    );
+    texto.writeln('------------------------');
+
+    // ¡Acá disparamos la ventana de compartir nativa del celular!
+    SharePlus.instance.share(ShareParams(text: texto.toString()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Fondo gris clarito tipo chapa para que resalte la zona de control
       color: Colors.grey[200],
       padding: const EdgeInsets.only(
         left: 12.0,
         right: 12.0,
         top: 16.0,
-        bottom: 24.0, // Más espacio abajo para los dedos/guantes
+        bottom: 24.0,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Que la caja ocupe solo lo necesario
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // FILA 1: La caja de texto y el botón de enviar (Lo que ya teníamos)
           Row(
             children: [
               Expanded(
@@ -368,7 +563,7 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
                       fontWeight: FontWeight.bold,
                     ),
                     filled: true,
-                    fillColor: Colors.white, // Fondo blanco para que contraste
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
@@ -384,20 +579,17 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
                 decoration: BoxDecoration(
                   color: _isAiThinking ? Colors.grey[400] : Colors.amber,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.black12,
-                    width: 2,
-                  ), // Borde resistente
+                  border: Border.all(color: Colors.black12, width: 2),
                 ),
                 child: IconButton(
-                  iconSize: 32, // ☀️ MODO OBRA: Botón de flecha más grande
+                  iconSize: 32,
                   icon: _isAiThinking
                       ? const SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
                             color: Colors.black,
-                            strokeWidth: 3.5, // Ruedita más gruesa
+                            strokeWidth: 3.5,
                           ),
                         )
                       : const Icon(Icons.arrow_forward, color: Colors.black),
@@ -423,11 +615,7 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
               ),
             ],
           ),
-
-          const SizedBox(
-            height: 16,
-          ), // Espacio entre el texto y los botones nuevos
-          // FILA 2: LOS BOTONES GIGANTES DE HERRAMIENTAS
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -435,23 +623,21 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
                 icono: Icons.camera_alt,
                 texto: 'FOTO',
                 alPresionar: () {
-                  debugPrint("📸 Botón CÁMARA presionado (Próximamente)");
+                  debugPrint("📸 Botón CÁMARA presionado");
                 },
               ),
               _BotonHerramienta(
                 icono: Icons.mic,
                 texto: 'AUDIO',
                 alPresionar: () {
-                  debugPrint("🎤 Botón MICRÓFONO presionado (Próximamente)");
+                  debugPrint("🎤 Botón MICRÓFONO presionado");
                 },
               ),
               _BotonHerramienta(
-                icono: Icons
-                    .share, // Ícono temporal hasta que pongamos el de WhatsApp
+                icono: Icons.share,
                 texto: 'ENVIAR',
-                alPresionar: () {
-                  debugPrint("📤 Botón ENVIAR presionado (Próximamente)");
-                },
+                // --- ACÁ CONECTAMOS EL CABLE AL BOTÓN ---
+                alPresionar: _compartirPresupuesto,
               ),
             ],
           ),
@@ -461,8 +647,6 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
   }
 }
 
-// --- MINI MOLDURA PARA FABRICAR BOTONES GIGANTES ---
-// Usamos esto para no repetir código 3 veces.
 class _BotonHerramienta extends StatelessWidget {
   final IconData icono;
   final String texto;
@@ -478,23 +662,20 @@ class _BotonHerramienta extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white, // Fondo del botón
-        foregroundColor: Colors.black, // Color cuando lo apretás
-        elevation: 3, // Sombrita
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 3,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: Colors.black12,
-            width: 2,
-          ), // Borde fuerte
+          side: const BorderSide(color: Colors.black12, width: 2),
         ),
       ),
       onPressed: alPresionar,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icono, size: 36, color: Colors.black87), // Ícono GIGANTE
+          Icon(icono, size: 36, color: Colors.black87),
           const SizedBox(height: 6),
           Text(
             texto,
