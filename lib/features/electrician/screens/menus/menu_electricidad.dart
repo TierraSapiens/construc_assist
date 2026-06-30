@@ -40,7 +40,7 @@ class MenuElectricidad extends ConsumerWidget {
             _buildMenuCard(
               context: context,
               isObra: isObra,
-              title: 'A) REPARACIONES',
+              title: 'REPARACIONES',
               subtitle: 'Guías de cambio y mantenimiento',
               icon: Icons.gavel_rounded,
               onTap: () {
@@ -59,7 +59,7 @@ class MenuElectricidad extends ConsumerWidget {
             _buildMenuCard(
               context: context,
               isObra: isObra,
-              title: 'B) DIAGNÓSTICOS',
+              title: 'DIAGNÓSTICOS',
               subtitle: 'Asistente interactivo de fallas',
               icon: Icons.youtube_searched_for_rounded,
               onTap: () {
@@ -78,8 +78,8 @@ class MenuElectricidad extends ConsumerWidget {
             _buildMenuCard(
               context: context,
               isObra: isObra,
-              title: 'C) HERRAMIENTAS',
-              subtitle: 'Cálculo de cables, tensión y Ley de Ohm',
+              title: 'HERRAMIENTAS',
+              subtitle: 'Cálculo de cables, tensión, Ley de Ohm',
               icon: Icons.calculate_rounded,
               onTap: () {
                 Navigator.push(
@@ -96,8 +96,8 @@ class MenuElectricidad extends ConsumerWidget {
             _buildMenuCard(
               context: context,
               isObra: isObra,
-              title: 'D) PRESUPUESTOS',
-              subtitle: 'Cálculo de cables, tensión y Ley de Ohm',
+              title: 'PRESUPUESTOS',
+              subtitle: 'Estimación del coste total de un servicio',
               icon: Icons.calculate_rounded,
               onTap: () {
                 Navigator.push(

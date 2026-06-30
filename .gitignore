@@ -15,6 +15,7 @@ migrate_working_dir/
 .packages
 prueba_electrostock.py
 captura_categoria.png
+gradle.properties
 
 # IntelliJ related
 *.iml

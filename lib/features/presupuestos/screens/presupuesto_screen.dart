@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/presupuesto_provider.dart';
 
-// --- NUEVO: ESTE ES EL INTERRUPTOR PARA CAMBIAR DE LENTE (A o B) ---
 final vistaDetalladaProvider = StateProvider<bool>((ref) => true);
 
 class PresupuestoScreen extends ConsumerWidget {
@@ -12,7 +11,6 @@ class PresupuestoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final presupuesto = ref.watch(presupuestoProvider);
-    // Leemos en qué modo estamos (True = A, False = B)
     final esVistaDetallada = ref.watch(vistaDetalladaProvider);
 
     return Scaffold(
@@ -28,80 +26,65 @@ class PresupuestoScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // ZONA SUPERIOR: La lista o el resumen
           Expanded(
-            child: presupuesto.items.isEmpty
-                ? const Center(
-                    child: Text(
-                      'El presupuesto está vacío.\nAgregá ítems o usá la I.A.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                : Column(
+            child: Column(
+              children: [
+                // BOTONERA DETALLE / RESUMEN
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
                     children: [
-                      // --- NUEVA BOTONERA A / B ---
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: esVistaDetallada
-                                      ? Colors.amber
-                                      : Colors.grey[300],
-                                  foregroundColor: Colors.black,
-                                  elevation: esVistaDetallada ? 3 : 0,
-                                ),
-                                onPressed: () {
-                                  // Cambiamos a la Vista A
-                                  ref
-                                          .read(vistaDetalladaProvider.notifier)
-                                          .state =
-                                      true;
-                                },
-                                child: const Text(
-                                  'DETALLE',
-                                  style: TextStyle(fontWeight: FontWeight.w900),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: !esVistaDetallada
-                                      ? Colors.amber
-                                      : Colors.grey[300],
-                                  foregroundColor: Colors.black,
-                                  elevation: !esVistaDetallada ? 3 : 0,
-                                ),
-                                onPressed: () {
-                                  // Cambiamos a la Vista B
-                                  ref
-                                          .read(vistaDetalladaProvider.notifier)
-                                          .state =
-                                      false;
-                                },
-                                child: const Text(
-                                  'RESUMEN',
-                                  style: TextStyle(fontWeight: FontWeight.w900),
-                                ),
-                              ),
-                            ),
-                          ],
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: esVistaDetallada
+                                ? Colors.amber
+                                : Colors.grey[300],
+                            foregroundColor: Colors.black,
+                            elevation: esVistaDetallada ? 3 : 0,
+                          ),
+                          onPressed: () =>
+                              ref.read(vistaDetalladaProvider.notifier).state =
+                                  true,
+                          child: const Text(
+                            'DETALLE',
+                            style: TextStyle(fontWeight: FontWeight.w900),
+                          ),
                         ),
                       ),
-                      // --- CONTENIDO SEGÚN EL LENTE ELEGIDO ---
+                      const SizedBox(width: 8),
                       Expanded(
-                        child: esVistaDetallada
-                            // VISTA A: LA LISTA DE SIEMPRE
-                            ? ListView.builder(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: !esVistaDetallada
+                                ? Colors.amber
+                                : Colors.grey[300],
+                            foregroundColor: Colors.black,
+                            elevation: !esVistaDetallada ? 3 : 0,
+                          ),
+                          onPressed: () =>
+                              ref.read(vistaDetalladaProvider.notifier).state =
+                                  false,
+                          child: const Text(
+                            'RESUMEN',
+                            style: TextStyle(fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // CONTENIDO DINÁMICO
+                Expanded(
+                  child: esVistaDetallada
+                      ? (presupuesto.items.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  'El detalle está vacío.',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : ListView.builder(
                                 itemCount: presupuesto.items.length,
                                 itemBuilder: (context, index) {
                                   final item = presupuesto.items[index];
@@ -120,11 +103,6 @@ class PresupuestoScreen extends ConsumerWidget {
                                       vertical: 4,
                                     ),
                                     child: ListTile(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 0,
-                                          ),
                                       title: Text(
                                         item.nombre,
                                         style: const TextStyle(
@@ -158,34 +136,26 @@ class PresupuestoScreen extends ConsumerWidget {
                                               color: Colors.red,
                                               size: 20,
                                             ),
-                                            onPressed: () {
-                                              ref
-                                                  .read(
-                                                    presupuestoProvider
-                                                        .notifier,
-                                                  )
-                                                  .eliminarItem(item.id);
-                                            },
+                                            onPressed: () => ref
+                                                .read(
+                                                  presupuestoProvider.notifier,
+                                                )
+                                                .eliminarItem(item.id),
                                           ),
                                         ],
                                       ),
                                     ),
                                   );
                                 },
-                              )
-                            // VISTA B: LA NUEVA TARJETA GLOBAL
-                            // VISTA B: LA NUEVA TARJETA GLOBAL (Ahora con Scroll para evitar desbordes)
-                            : SingleChildScrollView(
-                                child: _VistaResumida(
-                                  subtotal: presupuesto.subtotal,
-                                ),
-                              ),
-                      ),
-                    ],
-                  ),
+                              ))
+                      : const SingleChildScrollView(
+                          child: _VistaResumidaEditable(),
+                        ),
+                ),
+              ],
+            ),
           ),
-
-          // ZONA INFERIOR: Los Totales (La caja registradora)
+          // CAJA REGISTRADORA INFERIOR
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
@@ -201,21 +171,21 @@ class PresupuestoScreen extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                _FilaTotal(titulo: 'Subtotal:', valor: presupuesto.subtotal),
+                _FilaTotal(
+                  titulo: 'Subtotal Materiales:',
+                  valor: presupuesto.subtotal,
+                ),
                 InkWell(
-                  onTap: () {
-                    mostrarAjusteGanancia(
-                      context,
-                      ref,
-                      presupuesto.porcentajeGananciaExtra,
-                    );
-                  },
+                  onTap: () => mostrarAjusteManoDeObra(
+                    context,
+                    ref,
+                    presupuesto.manoDeObra,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: _FilaTotal(
-                      titulo:
-                          'Ganancia Extra (${presupuesto.porcentajeGananciaExtra.toInt()}%): ✏️',
-                      valor: presupuesto.montoGanancia,
+                      titulo: 'Mano de Obra: ✏️',
+                      valor: presupuesto.manoDeObra,
                     ),
                   ),
                 ),
@@ -242,11 +212,31 @@ class PresupuestoScreen extends ConsumerWidget {
   }
 }
 
-// --- NUEVO WIDGET: EL DISEÑO DE LA VISTA RESUMIDA (B) ---
-class _VistaResumida extends StatelessWidget {
-  final double subtotal;
+// 📝 NUEVO WIDGET: TRANSFORMADO EN BLOC DE NOTAS TOTALMENTE EDITABLE
+class _VistaResumidaEditable extends ConsumerStatefulWidget {
+  const _VistaResumidaEditable();
 
-  const _VistaResumida({required this.subtotal});
+  @override
+  ConsumerState<_VistaResumidaEditable> createState() =>
+      _VistaResumidaEditableState();
+}
+
+class _VistaResumidaEditableState
+    extends ConsumerState<_VistaResumidaEditable> {
+  late TextEditingController _resumenController;
+
+  @override
+  void initState() {
+    super.initState();
+    final textoActual = ref.read(presupuestoProvider).resumenIA ?? '';
+    _resumenController = TextEditingController(text: textoActual);
+  }
+
+  @override
+  void dispose() {
+    _resumenController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -259,60 +249,52 @@ class _VistaResumida extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Se adapta al texto
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Row(
               children: [
-                Icon(Icons.assignment_turned_in, color: Colors.amber, size: 36),
+                Icon(Icons.edit_note_rounded, color: Colors.amber, size: 36),
                 SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'SERVICIOS DE OBRA',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Ejecución de trabajos según lo presupuestado. Este importe incluye la provisión completa de materiales, insumos y la mano de obra especializada necesaria para la finalización de las tareas solicitadas.',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                height: 1.5, // Le da aire a las líneas del texto
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Divider(color: Colors.black26, thickness: 2),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Subtotal global:',
+                Text(
+                  'PROSA DEL PRESUPUESTO',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w900,
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  '\$${subtotal.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20,
+                    fontSize: 18,
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            // El campo de edición libre
+            TextField(
+              controller: _resumenController,
+              maxLines: null, // Crece hacia abajo infinitamente
+              keyboardType: TextInputType.multiline,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 15,
+                height: 1.4,
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: InputDecoration(
+                hintText:
+                    'Escribí acá los detalles del trabajo, horarios, formas de pago...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.black12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
+              ),
+              onChanged: (nuevoTexto) {
+                // Guarda la prosa en tiempo real en tu base de datos temporal
+                ref
+                    .read(presupuestoProvider.notifier)
+                    .actualizarResumen(nuevoTexto);
+              },
             ),
           ],
         ),
@@ -321,7 +303,6 @@ class _VistaResumida extends StatelessWidget {
   }
 }
 
-// Un widget chiquito para no repetir código al mostrar las filas de subtotales
 class _FilaTotal extends StatelessWidget {
   final String titulo;
   final double valor;
@@ -351,10 +332,7 @@ class _FilaTotal extends StatelessWidget {
           Text(
             '\$${valor.toStringAsFixed(2)}',
             style: TextStyle(
-              color: esTotal
-                  ? Colors.green[700]
-                  : Colors
-                        .black, // Le dimos un toque verde al total final para resaltar
+              color: esTotal ? Colors.green[700] : Colors.black,
               fontSize: esTotal ? 22 : 14,
               fontWeight: esTotal ? FontWeight.w900 : FontWeight.bold,
             ),
@@ -365,104 +343,91 @@ class _FilaTotal extends StatelessWidget {
   }
 }
 
-// --- HERRAMIENTA: PANEL EMERGENTE DE GANANCIA ---
-void mostrarAjusteGanancia(
+// 🛠️ NUEVA HERRAMIENTA: PANEL EMERGENTE NUMÉRICO PARA LA MANO DE OBRA
+void mostrarAjusteManoDeObra(
   BuildContext context,
   WidgetRef ref,
-  double gananciaActual,
+  double montoActual,
 ) {
-  double valorTemporal = gananciaActual;
+  final controller = TextEditingController(
+    text: montoActual == 0 ? '' : montoActual.toStringAsFixed(0),
+  );
 
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.white,
+    isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setStateBottomSheet) {
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Ajustar Ganancia Extra',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '${valorTemporal.toInt()}%',
-                  style: const TextStyle(
-                    fontSize: 56,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.amber,
-                  ),
-                ),
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 16.0,
-                    thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 18.0,
-                    ),
-                  ),
-                  child: Slider(
-                    value: valorTemporal,
-                    min: 0,
-                    max: 100,
-                    divisions: 20,
-                    activeColor: Colors.amber,
-                    inactiveColor: Colors.grey[300],
-                    onChanged: (nuevoValor) {
-                      setStateBottomSheet(() {
-                        valorTemporal = nuevoValor;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.amber,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () {
-                      ref
-                          .read(presupuestoProvider.notifier)
-                          .actualizarGanancia(valorTemporal);
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'APLICAR GANANCIA',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(
+            context,
+          ).viewInsets.bottom, // Evita que el teclado lo tape
+          left: 24,
+          right: 24,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Ingresar Mano de Obra',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: Colors.black,
+              ),
             ),
-          );
-        },
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              decoration: InputDecoration(
+                prefixText: '\$ ',
+                hintText: 'Ej: 50000',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  final monto = double.tryParse(controller.text) ?? 0.0;
+                  ref
+                      .read(presupuestoProvider.notifier)
+                      .actualizarManoDeObra(monto);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'GUARDAR IMPORTE',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       );
     },
   );
 }
 
-// --- FÁBRICA DE LA SÚPER CAJA DE HERRAMIENTAS (PUNTO 8) ---
 class AiInputBar extends ConsumerStatefulWidget {
   const AiInputBar({super.key});
 
@@ -480,54 +445,59 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
     super.dispose();
   }
 
-  // --- NUEVO CABLEADO: LA FUNCIÓN DE COMPARTIR ---
+  // 🚀 LA REGLA DE COMPARTIR CONFIGURADA SEGÚN TUS CONDICIONES EXACTAS
   void _compartirPresupuesto() {
-    // Leemos los datos actuales
     final presupuesto = ref.read(presupuestoProvider);
     final esVistaDetallada = ref.read(vistaDetalladaProvider);
 
-    // Si no hay nada, no hacemos nada
-    if (presupuesto.items.isEmpty) return;
-
-    // Empezamos a redactar el mensaje de WhatsApp usando un StringBuffer
     StringBuffer texto = StringBuffer();
     texto.writeln('📋 *PRESUPUESTO DE OBRA* 📋');
     texto.writeln('');
 
     if (esVistaDetallada) {
-      // SI ESTÁ EN MODO "A": Mandamos todos los materiales y mano de obra
-      texto.writeln('🛠️ *Detalle de ítems:*');
+      if (presupuesto.items.isEmpty) return;
+
+      texto.writeln('🛠️ *Detalle de tareas / materiales:*');
       for (var item in presupuesto.items) {
         texto.writeln('▪️ ${item.nombre}');
         texto.writeln(
-          '   ${item.cantidad} ${item.unidad} x \$${item.precioUnitario} = \$${item.total.toStringAsFixed(2)}',
+          '   ${item.cantidad} ${item.unidad} x \$${item.precioUnitario.toStringAsFixed(2)} = \$${item.total.toStringAsFixed(2)}',
         );
       }
+      texto.writeln('');
+      texto.writeln('------------------------');
+
+      // REGLA A: Si mano de obra es 0, no menciona Subtotal ni Mano de obra
+      if (presupuesto.manoDeObra == 0) {
+        texto.writeln(
+          '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
+        );
+      } else {
+        texto.writeln(
+          'Subtotal Materiales: \$${presupuesto.subtotal.toStringAsFixed(2)}',
+        );
+        texto.writeln(
+          'Mano de Obra: \$${presupuesto.manoDeObra.toStringAsFixed(2)}',
+        );
+        texto.writeln(
+          '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
+        );
+      }
+      texto.writeln('------------------------');
     } else {
-      // SI ESTÁ EN MODO "B": Mandamos el texto profesional y cerrado
-      texto.writeln('✅ *SERVICIOS DE OBRA*');
+      // REGLA B: MODO RESUMEN (No manda listas ni subtotales, manda tu prosa limpia)
+      final prosaPersonalizada = presupuesto.resumenIA ?? '';
+      if (prosaPersonalizada.isNotEmpty) {
+        texto.writeln(prosaPersonalizada);
+      }
+      texto.writeln('');
+      texto.writeln('------------------------');
       texto.writeln(
-        'Ejecución de trabajos según lo presupuestado. Incluye la provisión completa de materiales, insumos y la mano de obra especializada necesaria.',
+        '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
       );
+      texto.writeln('------------------------');
     }
 
-    texto.writeln('');
-    texto.writeln('------------------------');
-    texto.writeln('Subtotal: \$${presupuesto.subtotal.toStringAsFixed(2)}');
-
-    // Si agregaste ganancia extra, la mostramos sutilmente como un "Ajuste"
-    if (presupuesto.montoGanancia > 0) {
-      texto.writeln(
-        'Ajuste: \$${presupuesto.montoGanancia.toStringAsFixed(2)}',
-      );
-    }
-
-    texto.writeln(
-      '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
-    );
-    texto.writeln('------------------------');
-
-    // ¡Acá disparamos la ventana de compartir nativa del celular!
     SharePlus.instance.share(ShareParams(text: texto.toString()));
   }
 
@@ -597,16 +567,12 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
                       ? null
                       : () async {
                           if (_controller.text.isNotEmpty) {
-                            setState(() {
-                              _isAiThinking = true;
-                            });
+                            setState(() => _isAiThinking = true);
                             await ref
                                 .read(presupuestoProvider.notifier)
                                 .procesarTrabajoConIA(_controller.text);
                             if (mounted) {
-                              setState(() {
-                                _isAiThinking = false;
-                              });
+                              setState(() => _isAiThinking = false);
                               _controller.clear();
                             }
                           }
@@ -622,21 +588,16 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
               _BotonHerramienta(
                 icono: Icons.camera_alt,
                 texto: 'FOTO',
-                alPresionar: () {
-                  debugPrint("📸 Botón CÁMARA presionado");
-                },
+                alPresionar: () => debugPrint("📸 Foto"),
               ),
               _BotonHerramienta(
                 icono: Icons.mic,
                 texto: 'AUDIO',
-                alPresionar: () {
-                  debugPrint("🎤 Botón MICRÓFONO presionado");
-                },
+                alPresionar: () => debugPrint("🎤 Audio"),
               ),
               _BotonHerramienta(
                 icono: Icons.share,
                 texto: 'ENVIAR',
-                // --- ACÁ CONECTAMOS EL CABLE AL BOTÓN ---
                 alPresionar: _compartirPresupuesto,
               ),
             ],

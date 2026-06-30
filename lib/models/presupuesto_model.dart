@@ -22,7 +22,6 @@ class ItemPresupuesto {
   // Cálculo automático por línea
   double get total => cantidad * precioUnitario;
 
-  // TRADUCTOR: Recibe el JSON de Gemini y lo transforma en código de Flutter
   factory ItemPresupuesto.fromJson(Map<String, dynamic> json) {
     return ItemPresupuesto(
       id: json['id'] ?? '',
@@ -38,7 +37,6 @@ class ItemPresupuesto {
     );
   }
 
-  // TRADUCTOR: Pasa el objeto a JSON por si queremos guardarlo o enviarlo
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -57,10 +55,10 @@ class Presupuesto {
   final DateTime fecha;
   final String cliente;
   final List<ItemPresupuesto> items;
-  final List<String> imagenes; // Rutas de las fotos capturadas
-  final double porcentajeGananciaExtra; // Ajuste manual de ganancia
-  final double descuentoManual; // Ajuste manual para redondear precios
-  final String? resumenIA; // Texto explicativo de Gemini
+  final List<String> imagenes;
+  final double manoDeObra; // 🛠️ CAMBIO: Ahora es un monto fijo en pesos
+  final double descuentoManual;
+  final String? resumenIA; // Este será el texto editable de la prosa
 
   Presupuesto({
     required this.id,
@@ -68,17 +66,15 @@ class Presupuesto {
     required this.cliente,
     required this.items,
     this.imagenes = const [],
-    this.porcentajeGananciaExtra = 0.0,
+    this.manoDeObra = 0.0,
     this.descuentoManual = 0.0,
     this.resumenIA,
   });
 
-  // MATEMÁTICA INTERNA AUTOMÁTICA
+  // MATEMÁTICA INTERNA CORREGIDA
   double get subtotal => items.fold(0, (suma, item) => suma + item.total);
-  double get montoGanancia => subtotal * (porcentajeGananciaExtra / 100);
-  double get totalFinal => (subtotal + montoGanancia) - descuentoManual;
+  double get totalFinal => (subtotal + manoDeObra) - descuentoManual;
 
-  // TRADUCTOR GLOBAL: Pasa un presupuesto entero de JSON a Dart
   factory Presupuesto.fromJson(Map<String, dynamic> json) {
     return Presupuesto(
       id: json['id'] ?? '',
@@ -93,14 +89,12 @@ class Presupuesto {
               .toList() ??
           [],
       imagenes: List<String>.from(json['imagenes'] ?? []),
-      porcentajeGananciaExtra:
-          (json['porcentajeGananciaExtra'] as num?)?.toDouble() ?? 0.0,
+      manoDeObra: (json['manoDeObra'] as num?)?.toDouble() ?? 0.0,
       descuentoManual: (json['descuentoManual'] as num?)?.toDouble() ?? 0.0,
       resumenIA: json['resumenIA'],
     );
   }
 
-  // TRADUCTOR GLOBAL: Convierte todo el presupuesto listo para guardar en el celu
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -108,7 +102,7 @@ class Presupuesto {
       'cliente': cliente,
       'items': items.map((item) => item.toJson()).toList(),
       'imagenes': imagenes,
-      'porcentajeGananciaExtra': porcentajeGananciaExtra,
+      'manoDeObra': manoDeObra,
       'descuentoManual': descuentoManual,
       'resumenIA': resumenIA,
     };
