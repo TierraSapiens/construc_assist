@@ -212,34 +212,23 @@ class PresupuestoScreen extends ConsumerWidget {
   }
 }
 
-// 📝 NUEVO WIDGET: TRANSFORMADO EN BLOC DE NOTAS TOTALMENTE EDITABLE
-class _VistaResumidaEditable extends ConsumerStatefulWidget {
+// 📝 NUEVO WIDGET: VISTA RESUMIDA CON VENTANA DE EDICIÓN Y ADVERTENCIA
+class _VistaResumidaEditable extends ConsumerWidget {
   const _VistaResumidaEditable();
 
   @override
-  ConsumerState<_VistaResumidaEditable> createState() =>
-      _VistaResumidaEditableState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final presupuesto = ref.watch(presupuestoProvider);
+    final textoActual = presupuesto.resumenIA ?? '';
 
-class _VistaResumidaEditableState
-    extends ConsumerState<_VistaResumidaEditable> {
-  late TextEditingController _resumenController;
+    // LÓGICA INTELIGENTE: Verificamos si hay doble cobro de mano de obra
+    final tieneManoDeObraManual = presupuesto.manoDeObra > 0;
+    final mencionaManoDeObraEnTexto = textoActual.toLowerCase().contains(
+      'mano de obra',
+    );
+    final mostrarAdvertencia =
+        tieneManoDeObraManual && mencionaManoDeObraEnTexto;
 
-  @override
-  void initState() {
-    super.initState();
-    final textoActual = ref.read(presupuestoProvider).resumenIA ?? '';
-    _resumenController = TextEditingController(text: textoActual);
-  }
-
-  @override
-  void dispose() {
-    _resumenController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
       elevation: 3,
@@ -253,52 +242,177 @@ class _VistaResumidaEditableState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Icons.edit_note_rounded, color: Colors.amber, size: 36),
-                SizedBox(width: 12),
-                Text(
-                  'PROSA DEL PRESUPUESTO',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18,
-                  ),
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.edit_note_rounded,
+                      color: Colors.amber,
+                      size: 36,
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'PROSA DEL PRESUPUESTO',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.black87),
+                  tooltip: 'Editar texto',
+                  onPressed: () => _abrirEditor(context, ref, textoActual),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            // El campo de edición libre
-            TextField(
-              controller: _resumenController,
-              maxLines: null, // Crece hacia abajo infinitamente
-              keyboardType: TextInputType.multiline,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                height: 1.4,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: InputDecoration(
-                hintText:
-                    'Escribí acá los detalles del trabajo, horarios, formas de pago...',
-                border: OutlineInputBorder(
+            const SizedBox(height: 8),
+
+            // ALERTA AMARILLA SI HAY DUPLICADO
+            if (mostrarAdvertencia) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.amber[100],
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.black12),
+                  border: Border.all(color: Colors.amber, width: 2),
                 ),
-                filled: true,
-                fillColor: Colors.grey[50],
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange,
+                      size: 28,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Atención: Agregaste un valor manual de "Mano de Obra" abajo, pero este texto dice que ya está incluida. Corregí la redacción para evitar confusiones al cliente.',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              onChanged: (nuevoTexto) {
-                // Guarda la prosa en tiempo real en tu base de datos temporal
-                ref
-                    .read(presupuestoProvider.notifier)
-                    .actualizarResumen(nuevoTexto);
-              },
+            ],
+
+            // TEXTO DE SOLO LECTURA (Tocarlo también abre el editor)
+            InkWell(
+              onTap: () => _abrirEditor(context, ref, textoActual),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black12),
+                ),
+                child: Text(
+                  textoActual.isEmpty
+                      ? 'Toca aquí para escribir los detalles del trabajo...'
+                      : textoActual,
+                  style: TextStyle(
+                    color: textoActual.isEmpty
+                        ? Colors.black54
+                        : Colors.black87,
+                    fontSize: 15,
+                    height: 1.4,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // LA VENTANA EMERGENTE (OPCIÓN B) PARA EDITAR CÓMODAMENTE
+  void _abrirEditor(BuildContext context, WidgetRef ref, String textoActual) {
+    final controller = TextEditingController(text: textoActual);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Editar Redacción',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLines: 8,
+                minLines: 4,
+                keyboardType: TextInputType.multiline,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 15,
+                  height: 1.4,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.amber,
+                  ),
+                  onPressed: () {
+                    ref
+                        .read(presupuestoProvider.notifier)
+                        .actualizarResumen(controller.text);
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'GUARDAR TEXTO',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -343,7 +457,7 @@ class _FilaTotal extends StatelessWidget {
   }
 }
 
-// 🛠️ NUEVA HERRAMIENTA: PANEL EMERGENTE NUMÉRICO PARA LA MANO DE OBRA
+// 🛠️ HERRAMIENTA: PANEL EMERGENTE NUMÉRICO PARA LA MANO DE OBRA (CORREGIDO)
 void mostrarAjusteManoDeObra(
   BuildContext context,
   WidgetRef ref,
@@ -363,9 +477,7 @@ void mostrarAjusteManoDeObra(
     builder: (context) {
       return Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(
-            context,
-          ).viewInsets.bottom, // Evita que el teclado lo tape
+          bottom: MediaQuery.of(context).viewInsets.bottom,
           left: 24,
           right: 24,
           top: 24,
@@ -386,10 +498,18 @@ void mostrarAjusteManoDeObra(
               controller: controller,
               autofocus: true,
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              // FORZAMOS COLOR NEGRO PARA QUE SE VEA SIEMPRE
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.black,
+              ),
               decoration: InputDecoration(
                 prefixText: '\$ ',
                 hintText: 'Ej: 50000',
+                hintStyle: const TextStyle(color: Colors.black54),
+                filled: true,
+                fillColor: Colors.white, // FORZAMOS FONDO BLANCO
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +9,17 @@ import 'package:construc_assist/features/home/main_menu_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 1. Carga de entorno y preferencias (Tu código original)
   await dotenv.load(fileName: ".env");
-
   final prefs = await SharedPreferences.getInstance();
 
+  // 2. BLOQUEO DE PANTALLA (Lo nuevo)
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // 3. Arranque de la app (Tu código original)
   runApp(
     ProviderScope(
       overrides: [sharedPrefsProvider.overrideWithValue(prefs)],
