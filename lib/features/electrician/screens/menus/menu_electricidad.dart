@@ -16,18 +16,24 @@ class MenuElectricidad extends ConsumerWidget {
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
-      backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: isObra ? Colors.grey.shade900 : Colors.blue.shade800,
-        title: Text(
-          '⚡ Electricidad',
+        backgroundColor: Colors.amber, // Fondo amarillo del header
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+          size: 30,
+        ), // Flecha de volver en negro y grande
+        title: const Text(
+          'ELECTRICIDAD',
           style: TextStyle(
-            color: isObra ? Colors.amber : Colors.white,
-            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontWeight: FontWeight.w900, // w900 es el máximo grosor de letra
+            fontSize: 22,
+            letterSpacing:
+                1.2, // Un poco de espacio entre letras para leer mejor al sol
           ),
         ),
-        iconTheme: IconThemeData(color: isObra ? Colors.amber : Colors.white),
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,7 +120,7 @@ class MenuElectricidad extends ConsumerWidget {
     );
   }
 
-  // Molde adaptado al Camaleón (manteniendo el borde grueso)
+  // Molde adaptado al Camaleón (MODO OBRA = Máximo contraste solar)
   Widget _buildMenuCard({
     required BuildContext context,
     required bool isObra,
@@ -129,16 +135,16 @@ class MenuElectricidad extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isObra ? Colors.grey.shade900 : Colors.white,
+          // 🟡 FONDO: Amarillo en Obra, Blanco en Oficina
+          color: isObra ? Colors.amber : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isObra
-                ? Colors.amber.shade600
-                : Colors.blue.shade400, // <-- Borde adaptado
-            width: 2,
+            // ⚫ BORDE: Negro en Obra, Azul en Oficina
+            color: isObra ? Colors.black : Colors.blue.shade400,
+            width: isObra ? 3 : 2, // Borde más grueso en Obra
           ),
           boxShadow: isObra
-              ? null
+              ? null // Sin sombra en Obra para mantenerlo plano e industrial
               : [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -152,7 +158,8 @@ class MenuElectricidad extends ConsumerWidget {
             Icon(
               icon,
               size: 36,
-              color: isObra ? Colors.amber.shade600 : Colors.blue.shade700,
+              // ⚫ ÍCONO: Negro en Obra, Azul en Oficina
+              color: isObra ? Colors.black : Colors.blue.shade700,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -163,8 +170,9 @@ class MenuElectricidad extends ConsumerWidget {
                     title,
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isObra ? Colors.white : Colors.black87,
+                      // ⚫ TEXTO PRINCIPAL: Negro y Súper Grueso (w900) en Obra
+                      fontWeight: isObra ? FontWeight.w900 : FontWeight.bold,
+                      color: isObra ? Colors.black : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -172,9 +180,9 @@ class MenuElectricidad extends ConsumerWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isObra
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
+                      // ⚫ SUBTÍTULO: Negro fuerte en Obra, Gris en Oficina
+                      color: isObra ? Colors.black87 : Colors.grey.shade600,
+                      fontWeight: isObra ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -182,7 +190,8 @@ class MenuElectricidad extends ConsumerWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: isObra ? Colors.amber.shade600 : Colors.blue.shade300,
+              // ⚫ FLECHA: Negra en Obra, Azul clarito en Oficina
+              color: isObra ? Colors.black : Colors.blue.shade300,
               size: 18,
             ),
           ],

@@ -254,7 +254,7 @@ class _VistaResumidaEditable extends ConsumerWidget {
                     ),
                     SizedBox(width: 12),
                     Text(
-                      'PROSA DEL PRESUPUESTO',
+                      'MODIFICAR PRESUPUESTO',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w900,
@@ -393,10 +393,13 @@ class _VistaResumidaEditable extends ConsumerWidget {
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.amber,
+                    backgroundColor: Colors.amber, // Fondo Amarillo
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onPressed: () {
+                    // ACÁ ESTABA EL ERROR: AHORA SÍ GUARDAMOS EL TEXTO
                     ref
                         .read(presupuestoProvider.notifier)
                         .actualizarResumen(controller.text);
@@ -404,7 +407,11 @@ class _VistaResumidaEditable extends ConsumerWidget {
                   },
                   child: const Text(
                     'GUARDAR TEXTO',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black, // Letra Negra Gruesa
+                    ),
                   ),
                 ),
               ),
@@ -571,7 +578,7 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
     final esVistaDetallada = ref.read(vistaDetalladaProvider);
 
     StringBuffer texto = StringBuffer();
-    texto.writeln('📋 *PRESUPUESTO DE OBRA* 📋');
+    texto.writeln('📋 *PRESUPUESTO de OBRA* 📋');
     texto.writeln('');
 
     if (esVistaDetallada) {
