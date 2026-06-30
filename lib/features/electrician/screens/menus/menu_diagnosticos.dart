@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- IMPORTANTE: Agregamos Riverpod
-import 'package:construc_assist/core/settings/theme_provider.dart'; // <-- Importamos tu interruptor maestro
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:construc_assist/core/settings/theme_provider.dart';
 import 'package:construc_assist/features/electrician/screens/menus/diagnostics/pantalla_diagnostico.dart';
 
-// Cambiamos StatelessWidget por ConsumerWidget
 class MenuDiagnosticos extends ConsumerWidget {
   const MenuDiagnosticos({super.key});
 
   @override
-  // Agregamos el WidgetRef ref
   Widget build(BuildContext context, WidgetRef ref) {
     // Escuchamos en qué modo estamos
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
-      // EL CAMALEÓN EN ACCIÓN: Si es obra, negro. Si es oficina, blanco/gris muy claro.
+      // 🌑 FONDO GENERAL NEGRO EN MODO OBRA
       backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
-
       appBar: AppBar(
-        backgroundColor: isObra ? Colors.grey.shade900 : Colors.blue.shade800,
+        // 🟡 HEADER AMARILLO EN MODO OBRA
+        backgroundColor: isObra ? Colors.amber : Colors.blue.shade800,
         title: Text(
-          'Asistente de Fallas',
+          'ASISTENTE DE FALLAS',
           style: TextStyle(
-            color: isObra ? Colors.amber : Colors.white,
-            fontWeight: FontWeight.bold,
+            color: isObra ? Colors.black : Colors.white, // Letra Negra en Obra
+            fontWeight: isObra
+                ? FontWeight.w900
+                : FontWeight.bold, // Máximo grosor
+            letterSpacing: isObra ? 1.2 : 0,
           ),
         ),
-        iconTheme: IconThemeData(color: isObra ? Colors.amber : Colors.white),
+        iconTheme: IconThemeData(
+          color: isObra ? Colors.black : Colors.white,
+          size: isObra ? 30 : 24, // Flecha más grande y visible
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -34,8 +38,8 @@ class MenuDiagnosticos extends ConsumerWidget {
         children: [
           _buildDiagnosticoCard(
             context,
-            isObra: isObra, // Le pasamos el dato al molde
-            titulo: 'Salto de Térmica/Disyuntor',
+            isObra: isObra,
+            titulo: 'SALTO DE TÉRMICA/DISYUNTOR',
             subtitulo: 'Fallas en protecciones del tablero',
             icono: Icons.warning_amber_rounded,
             onTap: () {
@@ -51,7 +55,7 @@ class MenuDiagnosticos extends ConsumerWidget {
           _buildDiagnosticoCard(
             context,
             isObra: isObra,
-            titulo: 'Fuga a Tierra',
+            titulo: 'FUGA A TIERRA',
             subtitulo: 'Problemas de aislación y descargas',
             icono: Icons.electric_bolt,
             onTap: () {
@@ -64,7 +68,7 @@ class MenuDiagnosticos extends ConsumerWidget {
           _buildDiagnosticoCard(
             context,
             isObra: isObra,
-            titulo: 'Caída de Tensión',
+            titulo: 'CAÍDA DE TENSIÓN',
             subtitulo: 'Luces que parpadean o baja potencia',
             icono: Icons.trending_down,
             onTap: () {
@@ -78,7 +82,7 @@ class MenuDiagnosticos extends ConsumerWidget {
     );
   }
 
-  // Molde adaptado para recibir el "isObra"
+  // EL MOLDE DEFINITIVO PARA MODO OBRA (Amarillo + Bordes Negros + Textos Gruesos)
   Widget _buildDiagnosticoCard(
     BuildContext context, {
     required bool isObra,
@@ -89,19 +93,18 @@ class MenuDiagnosticos extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          // Fondo de la tarjeta
-          color: isObra ? Colors.grey.shade900 : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          // Borde de la tarjeta
+          // 🟡 FONDO: Amarillo en Obra, Blanco en Oficina
+          color: isObra ? Colors.amber : Colors.white,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isObra ? Colors.grey.shade800 : Colors.blue.shade100,
-            width: 1.5,
+            // ⚫ BORDE: Negro grueso en Obra
+            color: isObra ? Colors.black : Colors.blue.shade100,
+            width: isObra ? 3 : 2,
           ),
-          // Sombreado suave solo para el modo oficina
           boxShadow: isObra
               ? null
               : [
@@ -114,43 +117,44 @@ class MenuDiagnosticos extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            // Icono
             Icon(
               icono,
-              color: isObra ? Colors.amber : Colors.blue.shade700,
-              size: 40,
+              // ⚫ ÍCONO: Negro en Obra
+              color: isObra ? Colors.black : Colors.blue.shade700,
+              size: 36,
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título
                   Text(
                     titulo,
                     style: TextStyle(
-                      color: isObra ? Colors.white : Colors.black87,
+                      // ⚫ TÍTULO: Negro y w900 en Obra
+                      color: isObra ? Colors.black : Colors.black87,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: isObra ? FontWeight.w900 : FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // Subtítulo
                   Text(
                     subtitulo,
                     style: TextStyle(
-                      color: isObra
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
-                      fontSize: 14,
+                      // ⚫ SUBTÍTULO: Negro fuerte en Obra
+                      color: isObra ? Colors.black87 : Colors.grey.shade600,
+                      fontSize: 13,
+                      fontWeight: isObra ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
               ),
             ),
             Icon(
-              Icons.chevron_right,
-              color: isObra ? Colors.grey : Colors.blue.shade300,
+              Icons.arrow_forward_ios_rounded,
+              // ⚫ FLECHA: Negra en Obra
+              color: isObra ? Colors.black : Colors.blue.shade300,
+              size: 18,
             ),
           ],
         ),

@@ -12,19 +12,25 @@ class MenuReparaciones extends ConsumerWidget {
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
-      backgroundColor: isObra
-          ? Colors.black
-          : Colors.grey.shade50, // <-- Camaleón
+      // 🌑 FONDO GENERAL NEGRO EN MODO OBRA
+      backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: isObra ? Colors.grey.shade900 : Colors.blue.shade800,
+        // 🟡 HEADER AMARILLO EN MODO OBRA
+        backgroundColor: isObra ? Colors.amber : Colors.blue.shade800,
         title: Text(
-          'Reparaciones',
+          'REPARACIONES',
           style: TextStyle(
-            color: isObra ? Colors.amber : Colors.white,
-            fontWeight: FontWeight.bold,
+            color: isObra ? Colors.black : Colors.white, // Letra Negra en Obra
+            fontWeight: isObra
+                ? FontWeight.w900
+                : FontWeight.bold, // Máximo grosor en Obra
+            letterSpacing: isObra ? 1.2 : 0, // Espaciado extra para legibilidad
           ),
         ),
-        iconTheme: IconThemeData(color: isObra ? Colors.amber : Colors.white),
+        iconTheme: IconThemeData(
+          color: isObra ? Colors.black : Colors.white,
+          size: isObra ? 30 : 24, // Ícono de volver un poco más grande
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -33,7 +39,7 @@ class MenuReparaciones extends ConsumerWidget {
           _buildReparacionCard(
             context,
             isObra: isObra,
-            titulo: 'Cambio de Tomacorriente',
+            titulo: 'CAMBIO DE TOMACORRIENTE',
             subtitulo: 'Guía paso a paso segura',
             icono: Icons.outlet,
             onTap: () async {
@@ -59,7 +65,7 @@ class MenuReparaciones extends ConsumerWidget {
           _buildReparacionCard(
             context,
             isObra: isObra,
-            titulo: 'Instalación de Ventilador',
+            titulo: 'INSTALACIÓN DE VENTILADOR',
             subtitulo: 'Conexión de techo y variador',
             icono: Icons.mode_fan_off,
             onTap: () {
@@ -75,7 +81,7 @@ class MenuReparaciones extends ConsumerWidget {
     );
   }
 
-  // Molde adaptado al Camaleón
+  // EL MOLDE DEFINITIVO PARA MODO OBRA (Amarillo + Bordes Negros + Textos Gruesos)
   Widget _buildReparacionCard(
     BuildContext context, {
     required bool isObra,
@@ -86,16 +92,19 @@ class MenuReparaciones extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isObra ? Colors.grey.shade900 : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          // 🟡 FONDO: Amarillo en Obra, Blanco en Oficina
+          color: isObra ? Colors.amber : Colors.white,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isObra ? Colors.grey.shade800 : Colors.blue.shade100,
+            // ⚫ BORDE: Negro grueso en Obra, Azulito en Oficina
+            color: isObra ? Colors.black : Colors.blue.shade100,
+            width: isObra ? 3 : 2,
           ),
-          // Sombreado elegante sin errores (usando withValues)
+          // Sombra solo en Modo Oficina
           boxShadow: isObra
               ? null
               : [
@@ -110,8 +119,9 @@ class MenuReparaciones extends ConsumerWidget {
           children: [
             Icon(
               icono,
-              color: isObra ? Colors.amber : Colors.blue.shade700,
-              size: 40,
+              // ⚫ ÍCONO: Negro en Obra
+              color: isObra ? Colors.black : Colors.blue.shade700,
+              size: 36,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -121,27 +131,30 @@ class MenuReparaciones extends ConsumerWidget {
                   Text(
                     titulo,
                     style: TextStyle(
-                      color: isObra ? Colors.white : Colors.black87,
+                      // ⚫ TÍTULO: Negro y w900 en Obra
+                      color: isObra ? Colors.black : Colors.black87,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: isObra ? FontWeight.w900 : FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitulo,
                     style: TextStyle(
-                      color: isObra
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
+                      // ⚫ SUBTÍTULO: Negro fuerte en Obra
+                      color: isObra ? Colors.black87 : Colors.grey.shade600,
                       fontSize: 14,
+                      fontWeight: isObra ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
               ),
             ),
             Icon(
-              Icons.chevron_right,
-              color: isObra ? Colors.grey : Colors.blue.shade300,
+              Icons.arrow_forward_ios_rounded,
+              // ⚫ FLECHA: Negra en Obra
+              color: isObra ? Colors.black : Colors.blue.shade300,
+              size: 18,
             ),
           ],
         ),
