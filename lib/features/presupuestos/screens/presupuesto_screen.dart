@@ -736,7 +736,8 @@ class _BotonHerramienta extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Colors.amber, // <--- ACÁ: Cambiamos Colors.white por Colors.amber
         foregroundColor: Colors.black,
         elevation: 3,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

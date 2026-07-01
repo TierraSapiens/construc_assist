@@ -11,14 +11,30 @@ class MainMenuScreen extends ConsumerWidget {
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
+      // 🌑 FONDO GENERAL NEGRO EN MODO OBRA
+      backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
+
       appBar: AppBar(
-        title: const Text('Menú Principal'),
+        // 🟡 HEADER AMARILLO EN MODO OBRA (Afecta título y fondo)
+        backgroundColor: isObra ? Colors.amber : Colors.transparent,
+        elevation: isObra ? 0 : 0,
+        title: Text(
+          'MENÚ PRINCIPAL',
+          style: TextStyle(
+            color: isObra ? Colors.black : Colors.black87, // ⚫ Título Negro
+            fontWeight: isObra ? FontWeight.w900 : FontWeight.bold,
+            letterSpacing: isObra ? 1.2 : 0,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, size: 28),
+            // ⚫ ENGRANAJE NEGRO EN MODO OBRA
+            icon: Icon(
+              Icons.settings,
+              size: 28,
+              color: isObra ? Colors.black : Colors.black87,
+            ),
             tooltip: 'Configuración de Interfaz',
             onPressed: () {
               _showSettingsBottomSheet(context, ref, isObra);
@@ -31,31 +47,51 @@ class MainMenuScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // BÚSQUEDA POR VOZ (Adaptado para que combine bien en negro)
             ElevatedButton.icon(
-              onPressed: () {
-              },
-              icon: const Icon(Icons.mic, size: 48),
-              label: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.0),
+              onPressed: () {},
+              icon: Icon(
+                Icons.mic,
+                size: 48,
+                color: isObra
+                    ? Colors.amber
+                    : Theme.of(context).scaffoldBackgroundColor,
+              ),
+              label: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Text(
                   'BÚSQUEDA POR VOZ\n"Preguntale a Gemini"',
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: isObra ? FontWeight.bold : FontWeight.normal,
+                    color: isObra
+                        ? Colors.amber
+                        : Theme.of(context).scaffoldBackgroundColor,
+                  ),
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+                backgroundColor: isObra
+                    ? Colors.grey.shade900
+                    : Theme.of(context).colorScheme.secondary,
+                side: isObra
+                    ? const BorderSide(color: Colors.amber, width: 2)
+                    : BorderSide.none,
               ),
             ),
 
             const SizedBox(height: 40),
 
+            // ⚪ TEXTO BÚSQUEDA MANUAL (Blanco resaltado en Obra)
             Text(
-              'Búsqueda Manual',
+              'BÚSQUEDA MANUAL',
               style: TextStyle(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                fontWeight: isObra ? FontWeight.w900 : FontWeight.bold,
+                color: isObra
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.primary,
+                letterSpacing: isObra ? 1.2 : 0,
               ),
               textAlign: TextAlign.center,
             ),
@@ -68,9 +104,22 @@ class MainMenuScreen extends ConsumerWidget {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  _buildGremioButton(context, '⚡', 'Electricidad', true),
-                  _buildGremioButton(context, '🚰', 'Plomería', false),
-                  _buildGremioButton(context, '🧱', 'Albañilería', false),
+                  // Le pasamos la variable isObra a cada botón
+                  _buildGremioButton(
+                    context,
+                    '⚡',
+                    'ELECTRICIDAD',
+                    true,
+                    isObra,
+                  ),
+                  _buildGremioButton(context, '🚰', 'PLOMERÍA', false, isObra),
+                  _buildGremioButton(
+                    context,
+                    '🧱',
+                    'ALBAÑILERÍA',
+                    false,
+                    isObra,
+                  ),
                 ],
               ),
             ),
@@ -152,16 +201,18 @@ class MainMenuScreen extends ConsumerWidget {
     );
   }
 
+  // MOLDE "TANQUE DE GUERRA" PARA LOS BOTONES CUADRADOS
   Widget _buildGremioButton(
     BuildContext context,
     String emoji,
     String title,
     bool isActive,
+    bool isObra,
   ) {
-    return ElevatedButton(
-      onPressed: isActive
+    return InkWell(
+      onTap: isActive
           ? () {
-              if (title == 'Electricidad') {
+              if (title == 'ELECTRICIDAD') {
                 // Navegamos al nuevo Menú Intermedio de Electricidad
                 Navigator.push(
                   context,
@@ -179,21 +230,60 @@ class MainMenuScreen extends ConsumerWidget {
               }
             }
           : null,
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 48)),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          // 🟡 EL AMARILLO EXACTO (Colors.amber) EN OBRA
+          color: isObra
+              ? (isActive ? Colors.amber : Colors.grey.shade900)
+              : (isActive ? Colors.white : Colors.grey.shade200),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            // ⚫ BORDE NEGRO GRUESO DE 3PX EN OBRA
+            color: isObra
+                ? (isActive ? Colors.black : Colors.grey.shade800)
+                : (isActive ? Colors.blue.shade100 : Colors.transparent),
+            width: isObra ? 3 : 2,
           ),
-        ],
+          boxShadow: isObra
+              ? null
+              : [
+                  if (isActive)
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              emoji,
+              style: TextStyle(
+                fontSize: 48,
+                // Si está inactivo en modo obra, lo opacamos un poco
+                color: isObra && !isActive ? Colors.white24 : null,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                // ⚫ TEXTO NEGRO Y W900 SI ES OBRA Y ESTA ACTIVO
+                color: isObra
+                    ? (isActive ? Colors.black : Colors.grey.shade500)
+                    : (isActive ? Colors.black87 : Colors.grey),
+                fontWeight: isObra && isActive
+                    ? FontWeight.w900
+                    : FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
