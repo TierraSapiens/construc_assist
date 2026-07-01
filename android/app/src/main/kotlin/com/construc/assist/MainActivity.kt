@@ -1,4 +1,4 @@
-package com.example.construc_assist
+package com.construc.assist
 
 import io.flutter.embedding.android.FlutterActivity
 
