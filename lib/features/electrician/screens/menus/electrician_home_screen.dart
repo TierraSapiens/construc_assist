@@ -6,20 +6,16 @@ import 'package:construc_assist/core/settings/theme_provider.dart';
 import 'package:construc_assist/features/electrician/screens/calculators/ohms_law_screen.dart';
 import 'package:construc_assist/features/electrician/screens/calculators/power_calculator_screen.dart';
 
-// Cambiado a ConsumerWidget
 class ElectricianHomeScreen extends ConsumerWidget {
   const ElectricianHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos el modo obra
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
-      // 🌑 FONDO NEGRO EN MODO OBRA
       backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
       appBar: AppBar(
-        // 🟡 HEADER AMARILLO EN MODO OBRA
         backgroundColor: isObra ? Colors.amber : Colors.blue.shade800,
         title: Text(
           'HERRAMIENTAS DE CÁLCULO',
@@ -95,7 +91,6 @@ class ElectricianHomeScreen extends ConsumerWidget {
     );
   }
 
-  // EL MOLDE DEFINITIVO PARA MODO OBRA
   Widget _buildToolCard(
     BuildContext context, {
     required bool isObra,

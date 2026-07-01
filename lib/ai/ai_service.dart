@@ -26,11 +26,9 @@ class AiService {
     }
   }
 
-  // --- NUEVA FUNCIÓN PARA PRESUPUESTOS ---
+  /// Genera un presupuesto a partir de una descripción de trabajo.
   Future<String?> generarPresupuesto(String descripcionTrabajo) async {
     try {
-      // A diferencia del chat, acá creamos un modelo de un solo uso
-      // porque solo necesitamos una pregunta y una respuesta directa.
       final modeloEstructurado = GenerativeModel(
         model: 'gemini-3.5-flash',
         apiKey: _apiKey,

@@ -12,10 +12,8 @@ class MenuReparaciones extends ConsumerWidget {
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
-      // 🌑 FONDO GENERAL NEGRO EN MODO OBRA
       backgroundColor: isObra ? Colors.black : Colors.grey.shade50,
       appBar: AppBar(
-        // 🟡 HEADER AMARILLO EN MODO OBRA
         backgroundColor: isObra ? Colors.amber : Colors.blue.shade800,
         title: Text(
           'REPARACIONES',
@@ -43,16 +41,13 @@ class MenuReparaciones extends ConsumerWidget {
             subtitulo: 'Guía paso a paso segura',
             icono: Icons.outlet,
             onTap: () async {
-              // 1. Cargamos el JSON a través del provider
               await ref
                   .read(repairsProvider.notifier)
                   .cargarGuia(
                     'assets/2_repairs/electrician/reemplazo_tomacorriente.json',
                   );
 
-              // 2. Verificamos que el contexto siga vivo después del await (Buena práctica de Flutter)
               if (context.mounted) {
-                // 3. Navegamos a la pantalla dinámica
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const GuiaInteractivaScreen(),
@@ -81,7 +76,6 @@ class MenuReparaciones extends ConsumerWidget {
     );
   }
 
-  // EL MOLDE DEFINITIVO PARA MODO OBRA (Amarillo + Bordes Negros + Textos Gruesos)
   Widget _buildReparacionCard(
     BuildContext context, {
     required bool isObra,

@@ -19,7 +19,6 @@ class ItemPresupuesto {
     this.descripcion,
   });
 
-  // Cálculo automático por línea
   double get total => cantidad * precioUnitario;
 
   factory ItemPresupuesto.fromJson(Map<String, dynamic> json) {
@@ -71,7 +70,6 @@ class Presupuesto {
     this.resumenIA,
   });
 
-  // MATEMÁTICA INTERNA CORREGIDA
   double get subtotal => items.fold(0, (suma, item) => suma + item.total);
   double get totalFinal => (subtotal + manoDeObra) - descuentoManual;
 

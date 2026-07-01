@@ -45,7 +45,6 @@ class PresupuestoNotifier extends StateNotifier<Presupuesto> {
     );
   }
 
-  // 🛠️ NUEVO: Modificar el valor de mano de obra manualmente
   void actualizarManoDeObra(double nuevoMonto) {
     state = Presupuesto(
       id: state.id,
@@ -59,7 +58,6 @@ class PresupuestoNotifier extends StateNotifier<Presupuesto> {
     );
   }
 
-  // 📝 NUEVO: Guarda el texto dinámico a medida que el usuario escribe su prosa
   void actualizarResumen(String nuevoTexto) {
     state = Presupuesto(
       id: state.id,

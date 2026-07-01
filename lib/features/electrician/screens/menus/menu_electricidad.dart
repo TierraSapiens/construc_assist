@@ -7,12 +7,10 @@ import 'package:construc_assist/features/electrician/screens/menus/menu_reparaci
 import 'package:construc_assist/features/presupuestos/screens/presupuesto_screen.dart';
 
 class MenuElectricidad extends ConsumerWidget {
-  // <-- Cambiado a ConsumerWidget
   const MenuElectricidad({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // <-- Agregado WidgetRef ref
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
@@ -120,7 +118,6 @@ class MenuElectricidad extends ConsumerWidget {
     );
   }
 
-  // Molde adaptado al Camaleón (MODO OBRA = Máximo contraste solar)
   Widget _buildMenuCard({
     required BuildContext context,
     required bool isObra,

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:construc_assist/models/repairs_model.dart';
 
-// 1. Definimos el estado del flujo de reparación
+// Estado del flujo de reparación y su navegación entre tarjetas.
 class RepairsState {
   final bool isLoading;
   final ReparacionCompletaModel? reparacion;
@@ -39,7 +39,6 @@ class RepairsState {
   }
 }
 
-// 2. Creamos el Notificador que controla la lógica
 class RepairsNotifier extends StateNotifier<RepairsState> {
   RepairsNotifier() : super(RepairsState());
 
@@ -98,7 +97,6 @@ class RepairsNotifier extends StateNotifier<RepairsState> {
   }
 }
 
-// 3. El Provider global para escuchar desde la UI
 final repairsProvider = StateNotifierProvider<RepairsNotifier, RepairsState>((
   ref,
 ) {

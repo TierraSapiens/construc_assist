@@ -8,7 +8,6 @@ class MainMenuScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos si estamos en Modo Obra o no
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
@@ -17,13 +16,11 @@ class MainMenuScreen extends ConsumerWidget {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // BOTÓN DE CONFIGURACIÓN
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, size: 28),
             tooltip: 'Configuración de Interfaz',
             onPressed: () {
-              // Mostramos un panel flotante desde abajo para cambiar el modo
               _showSettingsBottomSheet(context, ref, isObra);
             },
           ),
@@ -34,10 +31,8 @@ class MainMenuScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. EL ASISTENTE: Botón de Voz Gigante
             ElevatedButton.icon(
               onPressed: () {
-                // Futura integración con Gemini
               },
               icon: const Icon(Icons.mic, size: 48),
               label: const Padding(
@@ -55,7 +50,6 @@ class MainMenuScreen extends ConsumerWidget {
 
             const SizedBox(height: 40),
 
-            // 2. BÚSQUEDA MANUAL
             Text(
               'Búsqueda Manual',
               style: TextStyle(
@@ -86,7 +80,6 @@ class MainMenuScreen extends ConsumerWidget {
     );
   }
 
-  // Panel de configuración que emerge desde abajo
   void _showSettingsBottomSheet(
     BuildContext context,
     WidgetRef ref,

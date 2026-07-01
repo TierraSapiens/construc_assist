@@ -15,7 +15,6 @@ class MaterialModel {
     required this.imagenUrl,
   });
 
-  // Este es el "conversor" que transforma el mapa del JSON a un objeto Dart
   factory MaterialModel.fromJson(Map<String, dynamic> json) {
     return MaterialModel(
       id: json['material_id'] ?? '',

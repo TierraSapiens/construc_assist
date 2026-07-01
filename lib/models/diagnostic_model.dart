@@ -1,4 +1,3 @@
-// Helper para extraer texto ya sea un String directo o un Mapa de idiomas { "es": "...", "en": "..." }
 String _extraerTextoEs(dynamic textoObj) {
   if (textoObj is String) return textoObj;
   if (textoObj is Map) return textoObj['es'] ?? 'Texto no disponible';

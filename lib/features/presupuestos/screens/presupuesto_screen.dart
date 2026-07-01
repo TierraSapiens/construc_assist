@@ -29,7 +29,6 @@ class PresupuestoScreen extends ConsumerWidget {
           Expanded(
             child: Column(
               children: [
-                // BOTONERA DETALLE / RESUMEN
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -74,7 +73,6 @@ class PresupuestoScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                // CONTENIDO DINÁMICO
                 Expanded(
                   child: esVistaDetallada
                       ? (presupuesto.items.isEmpty
@@ -155,7 +153,6 @@ class PresupuestoScreen extends ConsumerWidget {
               ],
             ),
           ),
-          // CAJA REGISTRADORA INFERIOR
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
@@ -212,7 +209,6 @@ class PresupuestoScreen extends ConsumerWidget {
   }
 }
 
-// 📝 NUEVO WIDGET: VISTA RESUMIDA CON VENTANA DE EDICIÓN Y ADVERTENCIA
 class _VistaResumidaEditable extends ConsumerWidget {
   const _VistaResumidaEditable();
 
@@ -221,7 +217,6 @@ class _VistaResumidaEditable extends ConsumerWidget {
     final presupuesto = ref.watch(presupuestoProvider);
     final textoActual = presupuesto.resumenIA ?? '';
 
-    // LÓGICA INTELIGENTE: Verificamos si hay doble cobro de mano de obra
     final tieneManoDeObraManual = presupuesto.manoDeObra > 0;
     final mencionaManoDeObraEnTexto = textoActual.toLowerCase().contains(
       'mano de obra',
@@ -272,7 +267,6 @@ class _VistaResumidaEditable extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
 
-            // ALERTA AMARILLA SI HAY DUPLICADO
             if (mostrarAdvertencia) ...[
               Container(
                 padding: const EdgeInsets.all(12),
@@ -305,7 +299,6 @@ class _VistaResumidaEditable extends ConsumerWidget {
               ),
             ],
 
-            // TEXTO DE SOLO LECTURA (Tocarlo también abre el editor)
             InkWell(
               onTap: () => _abrirEditor(context, ref, textoActual),
               child: Container(
@@ -337,7 +330,6 @@ class _VistaResumidaEditable extends ConsumerWidget {
     );
   }
 
-  // LA VENTANA EMERGENTE (OPCIÓN B) PARA EDITAR CÓMODAMENTE
   void _abrirEditor(BuildContext context, WidgetRef ref, String textoActual) {
     final controller = TextEditingController(text: textoActual);
 
@@ -399,7 +391,6 @@ class _VistaResumidaEditable extends ConsumerWidget {
                     ),
                   ),
                   onPressed: () {
-                    // ACÁ ESTABA EL ERROR: AHORA SÍ GUARDAMOS EL TEXTO
                     ref
                         .read(presupuestoProvider.notifier)
                         .actualizarResumen(controller.text);
@@ -464,7 +455,6 @@ class _FilaTotal extends StatelessWidget {
   }
 }
 
-// 🛠️ HERRAMIENTA: PANEL EMERGENTE NUMÉRICO PARA LA MANO DE OBRA (CORREGIDO)
 void mostrarAjusteManoDeObra(
   BuildContext context,
   WidgetRef ref,
@@ -505,7 +495,6 @@ void mostrarAjusteManoDeObra(
               controller: controller,
               autofocus: true,
               keyboardType: TextInputType.number,
-              // FORZAMOS COLOR NEGRO PARA QUE SE VEA SIEMPRE
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -516,7 +505,7 @@ void mostrarAjusteManoDeObra(
                 hintText: 'Ej: 50000',
                 hintStyle: const TextStyle(color: Colors.black54),
                 filled: true,
-                fillColor: Colors.white, // FORZAMOS FONDO BLANCO
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -572,7 +561,6 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
     super.dispose();
   }
 
-  // 🚀 LA REGLA DE COMPARTIR CONFIGURADA SEGÚN TUS CONDICIONES EXACTAS
   void _compartirPresupuesto() {
     final presupuesto = ref.read(presupuestoProvider);
     final esVistaDetallada = ref.read(vistaDetalladaProvider);
@@ -594,7 +582,6 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
       texto.writeln('');
       texto.writeln('------------------------');
 
-      // REGLA A: Si mano de obra es 0, no menciona Subtotal ni Mano de obra
       if (presupuesto.manoDeObra == 0) {
         texto.writeln(
           '💰 *TOTAL FINAL: \$${presupuesto.totalFinal.toStringAsFixed(2)}*',
@@ -612,7 +599,6 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
       }
       texto.writeln('------------------------');
     } else {
-      // REGLA B: MODO RESUMEN (No manda listas ni subtotales, manda tu prosa limpia)
       final prosaPersonalizada = presupuesto.resumenIA ?? '';
       if (prosaPersonalizada.isNotEmpty) {
         texto.writeln(prosaPersonalizada);

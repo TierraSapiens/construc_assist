@@ -35,8 +35,7 @@ class PowerMath {
     }
   }
 
-  // --- NUEVAS FUNCIONES AVANZADAS ---
-
+  // Potencia aparente y reactiva.
   // Potencia Aparente (S) en VA
   static double calcularPotenciaAparente(double potenciaActiva, double factorPotencia) {
     if (factorPotencia <= 0) return 0;

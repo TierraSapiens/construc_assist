@@ -9,26 +9,21 @@ class PowerCalculatorScreen extends StatefulWidget {
 }
 
 class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
-  // --- CONTROLADORES TAB 1: MONOFÁSICA ---
   final _vMonoController = TextEditingController(text: '220');
   final _iMonoController = TextEditingController();
 
-  // --- CONTROLADORES TAB 2: TRIFÁSICA ---
   final _vTriController = TextEditingController(text: '380');
   final _iTriController = TextEditingController();
 
-  // --- CONTROLADORES TAB 3: BUSCAR CORRIENTE ---
   final _pCurrentController = TextEditingController();
   final _vCurrentController = TextEditingController(text: '220');
   bool _isTriCurrent = false;
   double _resultCurrent = 0.0;
 
-  // --- CONTROLADORES COMPARTIDOS (AVANZADOS) ---
   final _fpController = TextEditingController(text: '0.85');
   final _horasController = TextEditingController();
   final _precioController = TextEditingController();
 
-  // --- ESTADOS DE RESULTADOS ---
   Map<String, double> _resultadosMono = {};
   Map<String, double> _resultadosTri = {};
 
@@ -215,7 +210,6 @@ class _PowerCalculatorScreenState extends State<PowerCalculatorScreen> {
     );
   }
 
-  // --- COMPONENTES VISUALES REUTILIZABLES ---
   Widget _buildTabContainer(List<Widget> children) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),

@@ -156,7 +156,6 @@ class _VoltageDropScreenState extends State<VoltageDropScreen> {
       return const SizedBox.shrink();
     }
 
-    // Alerta visual si la caída supera el 3% o 5%
     Color colorResultado = Theme.of(context).colorScheme.primary;
     if (_caidaPorcentaje > 5.0) {
       colorResultado = Colors.red;

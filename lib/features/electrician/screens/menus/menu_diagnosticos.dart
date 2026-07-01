@@ -8,7 +8,6 @@ class MenuDiagnosticos extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos en qué modo estamos
     final isObra = ref.watch(isObraModeProvider);
 
     return Scaffold(
@@ -82,7 +81,6 @@ class MenuDiagnosticos extends ConsumerWidget {
     );
   }
 
-  // EL MOLDE DEFINITIVO PARA MODO OBRA (Amarillo + Bordes Negros + Textos Gruesos)
   Widget _buildDiagnosticoCard(
     BuildContext context, {
     required bool isObra,

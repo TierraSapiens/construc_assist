@@ -33,24 +33,20 @@ class _PantallaDiagnosticoBreakerState
             );
           }
 
-          // Inicializamos el diagnóstico y seteamos el primer paso ("sec_001")
           if (_diagnostico == null) {
             _diagnostico = snapshot.data;
             _nodoActualId = _diagnostico!.nodoInicio;
           }
 
-          // Buscamos el nodo (pregunta/causa) en el que estamos parados
           final nodoActual = _diagnostico!.nodos.firstWhere(
             (n) => n.id == _nodoActualId,
             orElse: () => _diagnostico!.nodos.first,
           );
 
-          // Si el nodo es una "causa", llegamos al final del árbol
           if (nodoActual.tipo == 'causa') {
             return _buildPantallaSolucion(nodoActual);
           }
 
-          // Si no, dibujamos la pregunta o prueba
           return _buildPantallaPregunta(nodoActual);
         },
       ),
@@ -58,7 +54,6 @@ class _PantallaDiagnosticoBreakerState
   }
 
   Widget _buildPantallaPregunta(NodoModel nodo) {
-    // Le damos color rojo si es una pregunta de seguridad
     Color colorDestacado = nodo.tipo == 'seguridad'
         ? Colors.red.shade700
         : Colors.blueGrey;
@@ -124,8 +119,6 @@ class _PantallaDiagnosticoBreakerState
   }
 
   Widget _buildPantallaSolucion(NodoModel causa) {
-    // Buscamos la solución real basada en el ID que nos dio la causa
-    // (Por ahora tomamos la primera solución sugerida)
     final idSolucion = causa.solucionesIds.isNotEmpty
         ? causa.solucionesIds.first
         : '';

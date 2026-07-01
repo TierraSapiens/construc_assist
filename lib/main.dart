@@ -9,17 +9,14 @@ import 'package:construc_assist/features/home/main_menu_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Carga de entorno y preferencias (Tu código original)
   await dotenv.load(fileName: ".env");
   final prefs = await SharedPreferences.getInstance();
 
-  // 2. BLOQUEO DE PANTALLA (Lo nuevo)
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // 3. Arranque de la app (Tu código original)
   runApp(
     ProviderScope(
       overrides: [sharedPrefsProvider.overrideWithValue(prefs)],
@@ -66,7 +63,6 @@ class WelcomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 50),
 
-              // Boton MODO OBRA
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
@@ -87,7 +83,6 @@ class WelcomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 20),
 
-              // Boton MODO OFICINA
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {

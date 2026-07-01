@@ -8,15 +8,11 @@ class GuiaInteractivaScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Escuchamos el estado del motor de reparaciones y el modo visual
     final repairsState = ref.watch(repairsProvider);
     final repairsNotifier = ref.read(repairsProvider.notifier);
 
-    // Simulación del proveedor de modo. Reemplazar por el tuyo real:
-    // final isObraMode = ref.watch(isObraModeProvider);
     final isObraMode = true;
 
-    // Estilos de color basados en la lógica visual de la app
     final backgroundColor = const Color(0xFF1A1A1A);
     final cardColor = const Color(0xFF262626);
     final textColor = Colors.white;
@@ -66,7 +62,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // Barra de progreso superior o indicador de riesgo
           _buildHeaderRiesgo(tarjeta.riesgo, isObraMode, accentColor),
 
           Expanded(
@@ -75,7 +70,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Título del paso actual
                   Text(
                     tarjeta.titulo,
                     style: TextStyle(
@@ -86,7 +80,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Mensaje o instrucción principal
                   Text(
                     tarjeta.mensaje,
                     style: TextStyle(
@@ -97,7 +90,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Renderizador de Multimedia (Marcador de posición visual)
                   if (tarjeta.multimedia != null)
                     _buildMultimediaPlaceholder(
                       tarjeta.multimedia!,
@@ -107,7 +99,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
 
                   const SizedBox(height: 20),
 
-                  // Si la tarjeta contiene una lista (checklist o limpieza), la dibujamos
                   if (tarjeta.items != null)
                     _buildDynamicList(
                       tarjeta.items!,
@@ -122,7 +113,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
             ),
           ),
 
-          // Bloque inferior dinámico de acciones (Botones)
           _buildActionArea(
             tarjeta,
             repairsNotifier,
@@ -135,7 +125,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
     );
   }
 
-  // Indicador visual superior según el nivel de riesgo
   Widget _buildHeaderRiesgo(
     String? riesgo,
     bool isObraMode,
@@ -167,7 +156,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
     );
   }
 
-  // Contenedor multimedia adaptado al entorno gráfico
   Widget _buildMultimediaPlaceholder(
     List<Map<String, dynamic>> media,
     Color borderColor,
@@ -192,7 +180,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
     );
   }
 
-  // Listas interactivas (Checklist)
   Widget _buildDynamicList(
     List<String> items,
     Color cardColor,
@@ -235,7 +222,6 @@ class GuiaInteractivaScreen extends ConsumerWidget {
     );
   }
 
-  // El núcleo del motor: El mapeador de botones según la interacción del JSON
   Widget _buildActionArea(
     TarjetaReparacionModel tarjeta,
     RepairsNotifier notifier,

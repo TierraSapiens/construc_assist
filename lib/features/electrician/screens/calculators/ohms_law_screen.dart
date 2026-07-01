@@ -17,7 +17,6 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
   String? _errorMsg;
 
   void _calcular() {
-    // Cerramos el teclado
     FocusScope.of(context).unfocus();
 
     final v = double.tryParse(_vController.text);
