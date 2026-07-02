@@ -1,8 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../screens/camera_screen.dart';
 import '../../../core/providers/presupuesto_provider.dart';
-import '../screens/presupuesto_screen.dart'; // Necesario para leer si estamos en Detalle o Resumen
+import '../screens/presupuesto_screen.dart';
 
 class AiInputBar extends ConsumerStatefulWidget {
   const AiInputBar({super.key});
@@ -73,6 +77,112 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
 
     SharePlus.instance.share(ShareParams(text: texto.toString()));
   }
+
+  // =====================================================================
+  // FUNCIONES DE LA CÁMARA E INTELIGENCIA ARTIFICIAL (GEMINI MULTIMODAL)
+  // =====================================================================
+
+  Future<String?> _preguntarInstruccion(BuildContext context) {
+    final TextEditingController controlador = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: const Text(
+          '¿Qué hacemos con la foto?',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: TextField(
+          controller: controlador,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            hintText: 'Ej: Calcular pintura para esta pared de 28m2...',
+            hintStyle: TextStyle(color: Colors.grey),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.amber),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.amber),
+            ),
+          ),
+          maxLines: 3,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controlador.text),
+            child: const Text(
+              'Enviar a IA',
+              style: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _enviarFotoAGemini(
+    String rutaFoto,
+    String instruccionUsuario,
+  ) async {
+    final apiKey = dotenv.env['GEMINI_API_KEY'];
+
+    if (apiKey == null || apiKey.isEmpty) {
+      debugPrint("❌ ERROR: No se encontró GEMINI_API_KEY en el archivo .env");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: No se encontró la API Key en el .env'),
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      debugPrint("🚀 Enviando foto e instrucciones a Gemini...");
+
+      final bytesFoto = await File(rutaFoto).readAsBytes();
+
+      final model = GenerativeModel(model: 'gemini-3.5-flash', apiKey: apiKey);
+
+      final prompt = [
+        Content.multi([
+          TextPart(instruccionUsuario),
+          DataPart('image/jpeg', bytesFoto),
+        ]),
+      ];
+
+      final response = await model.generateContent(prompt);
+
+      debugPrint("RESPUESTA DE LA IA:");
+      debugPrint(response.text);
+
+      if (response.text != null && mounted) {
+        final textoActual = ref.read(presupuestoProvider).resumenIA ?? '';
+        final textoNuevo =
+            '$textoActual\n\n📸 Análisis de Foto:\n${response.text!}'.trim();
+
+        ref.read(presupuestoProvider.notifier).actualizarResumen(textoNuevo);
+        ref.read(vistaDetalladaProvider.notifier).state = false;
+      }
+    } catch (e) {
+      debugPrint("❌ Ocurrió un error con la IA: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al procesar la imagen: $e')),
+        );
+      }
+    }
+  }
+  // =====================================================================
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +271,26 @@ class _AiInputBarState extends ConsumerState<AiInputBar> {
               _BotonHerramienta(
                 icono: Icons.camera_alt,
                 texto: 'FOTO',
-                alPresionar: () => debugPrint("📸 Foto"),
+                alPresionar: () async {
+                  final imagePath = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CameraScreen(),
+                    ),
+                  );
+
+                  if (imagePath != null) {
+                    if (!context.mounted) return;
+                    final instruccion = await _preguntarInstruccion(context);
+                    if (instruccion != null && instruccion.isNotEmpty) {
+                      setState(() => _isAiThinking = true);
+                      await _enviarFotoAGemini(imagePath, instruccion);
+                      if (mounted) {
+                        setState(() => _isAiThinking = false);
+                      }
+                    }
+                  }
+                },
               ),
               _BotonHerramienta(
                 icono: Icons.mic,
